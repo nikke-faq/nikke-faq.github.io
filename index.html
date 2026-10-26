@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>니케 뉴비 FAQ</title>
 <meta name="description" content="처음 시작하는 지휘관을 위한 FAQ · 질문 43개">
+<meta name="google-site-verification" content="Dn5XTVt0WvT4ToIM8BWx-2w6VOhbuqOc-lOzN386Hfc" />
 <link rel="canonical" href="https://nikke-faq.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="니케 뉴비 FAQ">
@@ -503,7 +504,9 @@ img{max-width:100%}
 .lamp-sep{font-size:11px;color:var(--ink-3)}
 
 /* 버스트 역할 */
-.burst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.burst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:640px}   /* 4장 한 줄 유지 + 카드가 너무 커지지 않게 */
+@media (min-width:901px){ .burst{max-width:min(640px,calc((100vh - 404px) * 1.6))} }
+@media (max-width:900px) and (min-width:621px){ .burst{max-width:min(640px,max(380px,calc((100vh - 560px) * 1.25)))} }   /* 낮은 화면: 높이에 맞춰 카드 크기 축소 → 스크롤 없이 */
 .bcard{min-width:0;display:flex;flex-direction:column;gap:8px}
 .bcard-img{position:relative;max-width:100%;border-radius:var(--r-md);overflow:hidden;background:var(--sunken);border:1px solid var(--line)}
 .bcard-img img{width:100%;height:auto;display:block}
@@ -565,6 +568,19 @@ img{max-width:100%}
 .sync-line span{position:absolute;right:0;top:-20px;font-size:11.5px;color:var(--warn);font-weight:600;background:var(--surface);padding:0 4px}
 .sync2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sp{min-width:0;border-radius:14px;padding:14px 12px 12px;border:1.5px solid}
+/* 두 패널의 머리글·막대·합계 줄 높이를 맞춤: 한쪽 머리글만 두 줄로 줄바꿈돼도 막대 시작 위치가 같게 */
+.sync2{grid-auto-rows:auto}
+.sp{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.sync2 .sp-h{align-self:start;flex-wrap:nowrap}
+.sync2 .sp-h b,.sync2 .sp-h em{white-space:nowrap}
+.sp{container-type:inline-size}
+/* 패널이 좁을 때(가로 약 900~1000px 화면): 제목줄을 한 줄로 유지하도록 글자·간격 축소 */
+@container (max-width:215px){
+  .sync2 .sp-h{gap:5px}
+  .sync2 .sp .verdict{width:22px;height:22px;font-size:12.5px;border-radius:6px}
+  .sync2 .sp-h b{font-size:12px}
+  .sync2 .sp-h em{font-size:11px}
+}
 .sp-x{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
 .sp-o{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 55%,transparent)}
 .sp-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -658,6 +674,54 @@ img{max-width:100%}
 .btn-sm.icon-only svg{width:15px;height:15px}
 .btn-sm.icon-only svg{margin:0}
 .ovl-stats .num{font-weight:700;color:var(--ink)}
+
+/* 자동으로 돌려보기 팝업 */
+.btn-sm.auto{border-color:color-mix(in srgb,var(--burst) 60%,var(--line));color:var(--ink)}
+.btn-sm.auto svg{color:var(--burst)}
+.ovsim{position:fixed;inset:0;z-index:75;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px}
+.ovsim-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);width:min(600px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;box-shadow:var(--shadow);padding:22px 22px 18px}
+.ovsim-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ovsim-h h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.ovsim-h h3 svg{width:16px;height:16px;color:var(--burst)}
+.ovsim-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2)}
+.ovsim-x:hover{border-color:var(--accent);color:var(--accent)}
+.ovsim-x svg{width:14px;height:14px}
+.ovsim .seg{margin-bottom:16px}
+.ovsim h4{font-size:14px;font-weight:700;margin:18px 0 8px;color:var(--ink)}
+.ovsim h4 small{font-weight:500;color:var(--ink-3);font-size:12px;margin-left:6px}
+.ovsim-goal{font-size:13.5px;color:var(--ink-2);background:var(--sunken);border-radius:10px;padding:10px 12px}
+.ovsim-goal b{color:var(--ink)}
+.ovsim ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}
+.ovsim ol b{color:var(--accent)}
+.ovsim table{width:100%;border-collapse:collapse;font-size:13.5px}
+.ovsim th,.ovsim td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.ovsim th:first-child,.ovsim td:first-child{text-align:left;white-space:normal}
+.ovsim th{font-size:12px;font-weight:600;color:var(--ink-3)}
+.ovsim tr.rec td{font-weight:700;color:var(--ink)} .ovsim tr.rec td:first-child::before{content:"추천";font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;margin-right:6px}
+.ovsim td .num{font-weight:700}
+.ovsim-why{margin-top:10px;display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--ink-2);line-height:1.55}
+.ovsim-why p::before{content:"·";margin-right:6px;color:var(--ink-3)}
+.ovsim-run{display:flex;gap:8px;flex-wrap:wrap}
+.ovsim-out{margin-top:12px;min-height:20px}
+.ovsim-bars{display:flex;flex-direction:column;gap:10px}
+.ovsim-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;font-size:13px}
+.ovsim-bar i{grid-column:1 / -1;height:10px;border-radius:4px;background:var(--sunken);position:relative;overflow:hidden}
+.ovsim-bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--ink-3);border-radius:4px}
+.ovsim-bar.rec i::after{background:var(--accent)}
+.ovsim-bar b{font-weight:600} .ovsim-bar.rec b{color:var(--accent)}
+.ovsim-bar span{color:var(--ink-2)} .ovsim-bar span .num{color:var(--ink);font-weight:700}
+.ovsim-sum{font-size:14px;font-weight:600;margin-bottom:8px}
+.ovsim-sum .num{color:var(--accent);font-size:18px;font-weight:700}
+.ovsim-log{list-style:none;margin:0;padding:10px 12px;border-radius:10px;background:var(--sunken);font-size:13px;line-height:1.5;display:flex;flex-direction:column;gap:4px;max-height:240px;overflow-y:auto}
+.ovsim-log li{display:flex;gap:8px}
+.ovsim-log li em{font-style:normal;flex:none;min-width:52px;color:var(--ink-3);font-family:var(--f-num);font-size:12px;padding-top:1px}
+.ovsim-log li.k{color:var(--ink);font-weight:600} .ovsim-log li.ok{color:var(--ok);font-weight:700}
+.ovsim-legend{margin-top:6px;font-size:11.5px;color:var(--ink-3)}
+@media (max-width:620px){ .ovsim-card{padding:18px 16px 14px} .ovsim table{font-size:12.5px} .ovsim th,.ovsim td{padding:7px 4px} }
+.ovsim td small.kk{display:block;font-size:11.5px;font-weight:600;color:var(--burst);margin-top:1px}
+.ovsim tr.key td:first-child{color:var(--ink-2)}
+.ovsim-legend b{color:var(--ink-2);font-weight:700}
+.ovsim-note{margin-top:16px;font-size:12px;color:var(--ink-3);line-height:1.55}
 
 /* 오버로드 강화 */
 .gear{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:420px}
@@ -757,7 +821,12 @@ kbd{font-family:var(--f-num);font-size:12px;border:1px solid var(--line);border-
   .toolbar.stuck .chip{height:30px}
 }
 @media (max-width:620px){
-  .chars,.burst{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chars{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .burst{gap:6px}
+  .bcard{gap:5px}
+  .bcard b{font-size:12.5px}
+  .bcard span{font-size:11px;line-height:1.35}
+  .bcard .bstage{left:5px;top:5px;min-width:24px;height:21px;line-height:21px;font-size:12.5px;padding:0 6px;border-radius:6px}
   .gear{grid-template-columns:repeat(2,minmax(0,1fr))}
   .flow-row{grid-auto-flow:row;grid-auto-columns:auto}
   .fstep{min-height:0;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px}
@@ -875,6 +944,13 @@ kbd{font-family:var(--f-num);font-size:12px;border:1px solid var(--line);border-
   </div>
 </div>
 
+<div class="ovsim" id="ovsim" hidden>
+  <div class="ovsim-card" role="dialog" aria-modal="true" aria-labelledby="ovsimTitle">
+    <div class="ovsim-h"><h3 id="ovsimTitle"></h3><button class="ovsim-x" type="button" data-ovsim-close aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="seg" role="group" aria-label="목표"><button type="button" data-goal="fx" aria-pressed="true">효과만 맞추기</button><button type="button" data-goal="tier" aria-pressed="false">11단계 이상까지</button></div>
+    <div id="ovsimBody"></div>
+  </div>
+</div>
 <div class="help" id="help" hidden>
   <div class="help-card" role="dialog" aria-label="단축키">
     <h3>단축키</h3>
@@ -958,7 +1034,8 @@ var Q = [
 
 {c:2, q:"뭐부터 해야 하나요?", a:"일일퀘스트·이벤트부터 확인하고, 노말·하드는 막히기 전까지 미세요.", b:[
   {t:"flow", title:"빠른 성장을 원한다면", steps:[{l:"노말 6지 클리어"},{l:"스토리모드 오픈"},{l:"스토리 스킵 진행"},{l:"컴퍼니 암즈 확보", img:I("manufacturer arms")}]},
-  {t:"note", x:"단, 컴퍼니 암즈 보상(9티어 기업 장비)은 랜덤이고 스토리에 따른 소소한 연출은 포기해야 합니다."}]},
+  {t:"note", x:"단, 컴퍼니 암즈 보상(9티어 기업 장비)은 랜덤이고 스토리에 따른 맵에서의 소소한 연출은 포기해야 합니다."},
+  {t:"note", x:"스킵한 스토리는 전초기지 → 커맨드센터 → 회상에서 감상이 가능합니다."}]},
 
 {c:2, q:"매일 챙겨야 할 것", a:"일일퀘스트(시뮬레이션룸·요격전)·이벤트(입장권 5장 소진)", b:[
   {t:"emph", x:"시뮬레이션룸·요격전은 필수 일퀘"},
@@ -1165,6 +1242,150 @@ var OV_FX = [
   {n:"방어력 증가", w:10, v:OV_V477}
 ];
 var OV_TIER = [12,12,12,12,12,7,7,7,7,7,1,1,1,1,1];
+
+/* ── 자동으로 돌려보기: 추천 방법 시뮬레이션 (17p 위젯과 같은 규칙) ──
+   목표 효과 = 우월코드(0)·최대 장탄 수(2)·공격력(3). 줄별 등장 100/50/30%, 같은 효과는 한 번만,
+   비용: 최초 개조 1 · 변경/재설정 1+잠긴 줄 수 · 모듈 잠금 1→2 (영구). 최초 개조 효과는 11단계 고정. */
+var OV_P = [100,50,30], OV_GOAL = {0:1,2:1,3:1}, OV_LOCK_MOD = [1,2];
+function ovPick(ws){ var s = 0, i; for(i=0;i<ws.length;i++) s += ws[i]; var r = Math.random()*s; for(i=0;i<ws.length;i++){ r -= ws[i]; if(r < 0) return i; } return ws.length-1; }
+var OV_LOCK_KEY = [20,30];
+function ovRun(goal, plan, wantLog, byKey){
+  // byKey: 락 키로 잠금 — 한 번 바꾸면 풀리므로 잠가 둔 줄은 매번 다시 잠금(20 → 30개), 모듈 잠금 비용은 없음
+  var cur = [null,null,null], lock = [false,false,false], mod = 0, key = 0, nC = 0, nV = 0, log = [], pend = null;
+  function payKeys(){ if(!byKey) return; for(var i=0, n=0;i<3;i++) if(lock[i]){ key += OV_LOCK_KEY[n]; n++; } }
+  function nl(){ return (lock[0]?1:0)+(lock[1]?1:0)+(lock[2]?1:0); }
+  function ok(c){ return c && c.t >= 10; }
+  function nm(c){ return OV_FX[c.e].n.replace(" 증가","").replace(" 대미지",""); }
+  function flush(){ if(pend){ log.push({k:"", t:pend.kind+" "+pend.n+"회", m:pend.m, y:pend.y}); pend = null; } }
+  function note(kind){ if(!wantLog) return; if(pend && pend.kind===kind){ pend.n++; pend.m = mod; pend.y = key; } else { flush(); pend = {kind:kind, n:1, m:mod, y:key}; } }
+  function ev(txt, cls){ if(!wantLog) return; flush(); log.push({k:cls||"k", t:txt, m:mod, y:key}); }
+  function change(first){
+    var taken = {}, k; for(k=0;k<3;k++) if(lock[k]) taken[cur[k].e] = 1;
+    var nx = [];
+    for(k=0;k<3;k++){
+      if(lock[k]){ nx.push(cur[k]); continue; }
+      if(Math.random()*100 >= OV_P[k]){ nx.push(null); continue; }
+      var e = ovPick(OV_FX.map(function(f,i){ return taken[i] ? 0 : f.w; })); taken[e] = 1;
+      var t = first ? 10 : ovPick(OV_TIER), pv = cur[k];
+      if(!first && pv && pv.e===e && pv.t===t) t = ovPick(OV_TIER.map(function(w,i){ return i===t ? 0 : w; }));
+      nx.push({e:e, t:t});
+    }
+    cur = nx;
+  }
+  function value(){
+    cur = cur.map(function(c,k){
+      if(lock[k] || !c) return c;
+      var t = ovPick(OV_TIER); if(t===c.t) t = ovPick(OV_TIER.map(function(w,i){ return i===c.t ? 0 : w; }));
+      return {e:c.e, t:t};
+    });
+  }
+  function doLock(k){
+    var lbl = (k+1)+"번째 줄 "+nm(cur[k])+(goal==="tier"?" "+(cur[k].t+1)+"단계":"");
+    if(byKey){ lock[k] = true; ev(lbl+" 잠금 · 락 키 (바꿀 때마다 "+OV_LOCK_KEY[nl()-1]+"개)"); return; }
+    mod += OV_LOCK_MOD[nl()]; lock[k] = true; ev(lbl+" 잠금 · 모듈 "+OV_LOCK_MOD[nl()-1]+"개");
+  }
+  function goalOn(k){ return cur[k] && OV_GOAL[cur[k].e]; }
+  function haveAll(){ var n = 0; for(var k=0;k<3;k++) if(goalOn(k)) n++; return n===3; }
+  mod += 1; change(true); nC++; ev("최초 개조 · 효과는 11단계 고정", "");
+  for(var guard=0; guard<20000; guard++){
+    var all = haveAll();
+    if(all && (goal==="fx" || (ok(cur[0]) && ok(cur[1]) && ok(cur[2])))){
+      ev("완성 · 커스텀 모듈 "+mod+"개"+(byKey?" · 락 키 "+key+"개":""), "ok");
+      return {mod:mod, key:key, c:nC, v:nV, log:log};
+    }
+    if(goal==="tier" && all){
+      // 2단계: 효과 확보 → 11단계 미만 잠금 해제, 11단계 이상 잠금, 수치 재설정
+      for(var k=0;k<3;k++) if(lock[k] && !ok(cur[k])){ lock[k] = false; ev((k+1)+"번째 줄 잠금 해제 (11단계 미만 → 수치 재설정 대상)", ""); }
+      if(wantLog && nV===0) ev("효과 3개 확보 → 이제 수치 재설정만", "");
+      for(k=0;k<3;k++) if(!lock[k] && ok(cur[k]) && nl()<2) doLock(k);
+      mod += 1+nl(); payKeys(); value(); nV++; note("수치 재설정"); continue;
+    }
+    // 1단계: 효과 모으기
+    if(plan==="rec"){
+      if(!lock[2] && goalOn(2) && (goal==="fx" || true)) doLock(2);
+      if(lock[2] && !lock[1] && goalOn(1) && nl()<2) doLock(1);
+    } else if(plan==="common"){
+      if(!lock[2] && cur[2] && (cur[2].e===0 || cur[2].e===3)) doLock(2);
+      if(lock[2]) for(var j=0;j<2;j++) if(nl()<2 && !lock[j] && goalOn(j)) doLock(j);
+    } else if(plan==="okonly"){
+      if(!lock[2] && goalOn(2) && ok(cur[2])) doLock(2);
+      if(lock[2] && !lock[1] && goalOn(1) && ok(cur[1]) && nl()<2) doLock(1);
+    }
+    mod += 1+nl(); payKeys(); change(false); nC++; note("옵션 변경");
+  }
+  return {mod:mod, key:key, c:nC, v:nV, log:log};
+}
+var OVSIM = {
+  fx:{goal:"3줄에 <b>우월코드 · 최대 장탄 수 · 공격력</b>이 모두 뜨는 것 (단계 무관)",
+    steps:["<b>3번째 줄</b>에 셋 중 아무거나 뜨면 바로 모듈로 잠금 — 공격력·우월코드뿐 아니라 <b>장탄도</b> 잠급니다.",
+           "3번째 줄이 잠긴 뒤 <b>2번째 줄</b>에 남은 효과가 뜨면 잠금.",
+           "<b>1번째 줄은 잠그지 않습니다.</b> 매번 100% 나오는 줄이라 잠금 비용이 아깝습니다.",
+           "3번째 줄이 잠기기 전에는 1·2번째 줄에 무엇이 떠도 잠그지 않습니다."],
+    table:[{n:"추천 방법", a:"47", m:"42", p:"84", rec:1},{n:"추천 방법 · 락 키로 잠금", a:"44", m:"39", p:"81", ka:"470", km:"370", kp:"970"},{n:"일반 상식 (3번째 줄 공격·우월 → 1·2번째 줄 잠금)", a:"57", m:"47", p:"110"},{n:"일반 상식 · 락 키로 잠금", a:"55", m:"44", p:"107", ka:"620", km:"410", kp:"1,420"},{n:"잠금 없이 옵션 변경만", a:"649", m:"–", p:"–"}],
+    why:["3번째 줄은 등장 확률이 30%뿐이라, 원하는 효과가 뜬 순간이 가장 귀합니다 — 장탄이어도 잡는 게 이득.",
+         "1번째 줄은 매번 나오니, 남은 하나는 1번째 줄에서 뜰 때까지 돌리는 게 잠금 비용보다 쌉니다.",
+         "락 키로 잠그면 모듈은 3개 정도만 줄고 락 키가 평균 약 470개 듭니다 — 락 키 잠금은 한 번 바꾸면 풀려서 매번 다시 잠가야 하기 때문입니다."],
+    plans:[["rec","추천 방법"],["rec","추천 방법 · 락 키",1],["common","일반 상식"],["none","잠금 없이"]]},
+  tier:{goal:"3줄 모두 <b>우월코드 · 최대 장탄 수 · 공격력</b>이면서 <b>11단계 이상</b>",
+    steps:["<b>효과 먼저:</b> ‘효과만 맞추기’와 같은 방법으로 3번째 → 2번째 줄 순서로, 단계와 상관없이 잠급니다.",
+           "세 효과가 모이면 <b>옵션 변경을 멈추고 수치 재설정만</b> 사용 — 효과는 그대로, 단계만 다시 뽑습니다.",
+           "<b>11단계 미만으로 잠긴 줄은 잠금 해제</b> — 효과는 사라지지 않으니 풀어서 재설정 대상에 넣습니다.",
+           "수치 재설정 중 <b>11단계 이상이 뜬 줄만 잠그고</b> 계속 → 세 줄 모두 11단계 이상이면 완성."],
+    table:[{n:"추천 방법 (효과 먼저 → 수치 나중)", a:"124", m:"112", p:"206", rec:1},{n:"추천 방법 · 락 키로 잠금", a:"119", m:"107", p:"201", ka:"1,520", km:"1,300", kp:"2,790"},{n:"11단계 이상일 때만 잠그기", a:"290", m:"249", p:"540"}],
+    why:["11~15단계는 각각 1%씩, 줄마다 합쳐 약 5% — 한 줄 맞추는 데만 평균 약 18번입니다.",
+         "단계까지 보면서 효과를 모으면, 원하는 효과가 떠도 놓치게 돼 효과 모으기 비용이 크게 늘어납니다.",
+         "최초 개조로 나온 효과는 11단계 고정이라, 그때 원하는 효과가 뜨면 바로 잠그는 게 이득입니다.",
+         "락 키로 잠그면 수치 재설정을 반복하는 동안 매번 다시 잠가야 해서 락 키가 평균 약 1,500개 듭니다 — 모듈은 5개 정도만 줄어듭니다."],
+    plans:[["rec","추천 방법"],["rec","추천 방법 · 락 키",1],["okonly","11단계 이상일 때만 잠금"]]}
+};
+var ovsimEl, ovsimGoal = "fx", ovsimFrom = null;
+function ovSimRender(){
+  var g = OVSIM[ovsimGoal];
+  document.getElementById("ovsimTitle").innerHTML = ICO.play+"자동으로 돌려보기";
+  ovsimEl.querySelectorAll("[data-goal]").forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.goal===ovsimGoal); });
+  document.getElementById("ovsimBody").innerHTML =
+    '<p class="ovsim-goal">목표: '+g.goal+'</p>'+
+    '<h4>추천 방법</h4><ol>'+g.steps.map(function(x){ return '<li>'+x+'</li>'; }).join("")+'</ol>'+
+    '<h4>계산 근거 <small>커스텀 모듈 소모 · 같은 규칙으로 수만~수십만 번 계산</small></h4>'+
+    '<table><thead><tr><th>방법</th><th>평균</th><th>절반</th><th>90%</th></tr></thead><tbody>'+
+      g.table.map(function(r){ var kk = function(v){ return r.ka ? '<small class="kk">락 키 '+v+'</small>' : ''; };
+        return '<tr'+(r.rec?' class="rec"':'')+(r.ka?' class="key"':'')+'><td>'+r.n+'</td><td><span class="num">'+r.a+'</span>개'+kk(r.ka)+'</td><td>'+r.m+(r.m!=="–"?"개":"")+kk(r.km)+'</td><td>'+r.p+(r.p!=="–"?"개":"")+kk(r.kp)+'</td></tr>'; }).join("")+
+    '</tbody></table>'+
+    '<p class="ovsim-legend"><b>평균</b> 모든 시도의 평균 · <b>절반</b> 2번 중 1번은 이 개수 안에 완성 · <b>90%</b> 10번 중 9번은 이 개수 안에 완성 (나머지 1번은 운이 나빠 더 듦)</p>'+
+    '<div class="ovsim-why">'+g.why.map(function(x){ return '<p>'+x+'</p>'; }).join("")+'</div>'+
+    '<h4>직접 돌려보기</h4><div class="ovsim-run"><button class="btn-sm primary" type="button" data-sim-one>'+ICO.play+'추천 방법으로 1번</button><button class="btn-sm" type="button" data-sim-one data-key="1">'+ICO.play+'락 키로 1번</button><button class="btn-sm" type="button" data-sim-many>'+ICO.dice+'방법별 1,000번 비교</button></div>'+
+    '<div class="ovsim-out" data-sim-out></div>'+
+    '<p class="ovsim-note">17페이지 시뮬레이터 규칙(확률표 · 줄별 등장 100/50/30% · 잠금 비용) 기준입니다. 실제 게임 규칙과 다르면 결과도 달라질 수 있습니다.</p>';
+}
+function ovSimOne(byKey){
+  var r = ovRun(ovsimGoal, "rec", true, byKey), out = ovsimEl.querySelector("[data-sim-out]");
+  out.innerHTML = '<p class="ovsim-sum">커스텀 모듈 <span class="num">'+r.mod+'</span>개'+(byKey?' · 락 키 <span class="num">'+r.key+'</span>개':'')+' · 옵션 변경 '+r.c+'회'+(ovsimGoal==="tier"?' · 수치 재설정 '+r.v+'회':'')+'</p><p class="ovsim-legend" style="margin:-4px 0 8px">왼쪽 숫자는 그 시점까지 쓴 누적 소모량</p>'+
+    '<ol class="ovsim-log">'+r.log.map(function(x){ return '<li class="'+x.k+'"><em>모듈 '+x.m+(byKey?'<br>키 '+x.y:'')+'</em><span>'+x.t+'</span></li>'; }).join("")+'</ol>';
+}
+function ovSimMany(){
+  var g = OVSIM[ovsimGoal], out = ovsimEl.querySelector("[data-sim-out]"), res = [];
+  g.plans.forEach(function(pl){
+    var xs = [], ks = 0; for(var i=0;i<1000;i++){ var rr = ovRun(ovsimGoal, pl[0], false, pl[2]); xs.push(rr.mod); ks += rr.key; }
+    xs.sort(function(a,b){ return a-b; });
+    var avg = xs.reduce(function(a,b){ return a+b; },0)/xs.length;
+    res.push({n:pl[1], rec:pl[0]==="rec" && !pl[2], avg:avg, med:xs[500], p90:xs[900], key:pl[2] ? Math.round(ks/1000) : 0});
+  });
+  var mx = Math.max.apply(null, res.map(function(r){ return r.avg; }));
+  out.innerHTML = '<div class="ovsim-bars">'+res.map(function(r){ return '<div class="ovsim-bar'+(r.rec?" rec":"")+'"><b>'+r.n+'</b><span>평균 <span class="num">'+Math.round(r.avg)+'</span>개'+(r.key?' + 락 키 <span class="num">'+r.key.toLocaleString()+'</span>개':'')+' · 절반 '+r.med+' · 90% '+r.p90+'</span><i style="--w:'+Math.max(2, r.avg/mx*100).toFixed(1)+'%"></i></div>'; }).join("")+'</div>';
+}
+function ovSimOpen(from){
+  ovsimEl = document.getElementById("ovsim"); ovsimFrom = from || null;
+  ovSimRender(); ovsimEl.hidden = false;
+  setTimeout(function(){ var x = ovsimEl.querySelector("[data-ovsim-close]"); if(x) x.focus(); }, 30);
+}
+function ovSimClose(){ if(!ovsimEl || ovsimEl.hidden) return; ovsimEl.hidden = true; if(ovsimFrom) try{ ovsimFrom.focus({preventScroll:true}); }catch(e){} }
+document.addEventListener("click", function(e){
+  if(!ovsimEl || ovsimEl.hidden) return;
+  if(e.target===ovsimEl || e.target.closest("[data-ovsim-close]")){ ovSimClose(); return; }
+  var g = e.target.closest("[data-goal]"); if(g && ovsimEl.contains(g)){ ovsimGoal = g.dataset.goal; ovSimRender(); return; }
+  var one = e.target.closest("[data-sim-one]"); if(one){ ovSimOne(!!one.dataset.key); return; }
+  if(e.target.closest("[data-sim-many]")){ ovSimMany(); return; }
+});
 var N = Q.length;           // 43
 var END = N;                // 마무리 슬라이드 인덱스
 Q.forEach(function(q,i){
@@ -1406,8 +1627,8 @@ function widgetHTML(b){
     return head("오버로드 옵션 뽑기", "인게임 확률 정보 기준")+
       '<div class="ov-wrap"><div class="ovl">'+b.p.map(function(p,k){ return '<div class="oline" data-k="'+k+'"><span class="p num">'+p+'%</span><span class="ov-main"><span class="ov-name">'+(k+1)+'번째 효과</span><span class="ov-sub">아직 개조 전</span></span><span class="res">—</span><button class="ov-lock" type="button" data-lock="'+k+'" disabled aria-label="'+(k+1)+'번째 효과 잠그기">'+ICO.unlock+'</button></div>'; }).join("")+'</div>'+
       '<div class="ov-pick" data-pick hidden><span data-pick-t></span><span class="w-actions"><button class="btn-sm primary" type="button" data-pick-mod></button><button class="btn-sm" type="button" data-pick-key></button><button class="btn-sm" type="button" data-pick-no>취소</button></span></div></div>'+
-      '<div class="w-actions" style="margin-top:14px;"><span class="w-actions"><button class="btn-sm icon-only" type="button" data-reset aria-label="처음으로" title="처음으로">'+ICO.reset+'</button><button class="btn-sm primary" type="button" data-first>'+ICO.spark+'최초 개조</button><button class="btn-sm primary" type="button" data-change disabled>'+ICO.dice+'옵션 변경 <small data-cost-c></small></button><button class="btn-sm" type="button" data-value disabled>'+ICO.dice+'수치 재설정 <small data-cost-v></small></button></span></div>'+
-      '<div class="ov-statrow"><div class="ovl-stats"><span>커스텀 모듈 <span class="num" data-mod>0</span>개 · 커스텀 락 키 <span class="num" data-key>0</span>개 소모</span><span>시도 <span class="num" data-t>0</span>회 · 3줄 <span class="num" data-a>0</span>회 · 12단계 이상 <span class="num" data-h>0</span>회</span><span data-good></span></div>'+
+      '<div class="w-actions" style="margin-top:14px;"><span class="w-actions"><button class="btn-sm icon-only" type="button" data-reset aria-label="처음으로" title="처음으로">'+ICO.reset+'</button><button class="btn-sm primary" type="button" data-first>'+ICO.spark+'최초 개조</button><button class="btn-sm primary" type="button" data-change disabled>'+ICO.dice+'옵션 변경 <small data-cost-c></small></button><button class="btn-sm" type="button" data-value disabled>'+ICO.dice+'수치 재설정 <small data-cost-v></small></button><button class="btn-sm auto" type="button" data-auto>'+ICO.play+'자동으로 돌려보기</button></span></div>'+
+      '<div class="ov-statrow"><div class="ovl-stats"><span>커스텀 모듈 <span class="num" data-mod>0</span>개 · 커스텀 락 키 <span class="num" data-key>0</span>개 소모</span><span>시도 <span class="num" data-t>0</span>회 · 3줄 <span class="num" data-a>0</span>회 · 12단계 이상 <span class="num" data-h>0</span>회 · 15단계 <span class="num" data-m>0</span>회</span><span data-good></span></div>'+
       '<div class="ov-modbig" aria-label="커스텀 모듈 소모">'+img(I("custom module"),"item","커스텀 모듈")+'<span class="num" data-mod-big>0</span></div></div>'+
       '<details class="ov-table"><summary>확률표 보기</summary>'+
         '<table><thead><tr><th>효과</th><th>수치 범위</th><th>확률</th></tr></thead><tbody>'+rows+'</tbody></table>'+
@@ -1699,7 +1920,8 @@ var MOUNT = {
     var pickBox = el.querySelector("[data-pick]");
     var cur = [null,null,null], lock = [null,null,null], rolled = false, t = 0, a = 0, h = 0, mod = 0, key = 0, pending = -1;
     var GOOD = OV_FX.map(function(f,i){ return f.good ? i : -1; }).filter(function(i){ return i>=0; });
-    var good3 = 0;   // 3번째 줄(30%)에 유효 옵션이 새로 나온 횟수 (잠겨서 유지된 줄은 제외)
+    var good3 = 0, m15 = 0;   // m15: 새로 나온 15단계(최대) 횟수 (잠겨서 유지된 줄은 제외)
+      // 3번째 줄(30%)에 유효 옵션이 새로 나온 횟수 (잠겨서 유지된 줄은 제외)
     function goodText(){ return '3번째 줄 유효 옵션(우월코드·공격력) <span class="num">'+good3+'</span>회'; }
     var LOCK_MOD = [1,2], LOCK_KEY = [20,30];            // 1번째·2번째 잠금 비용
     function nLock(){ return lock.filter(Boolean).length; }
@@ -1709,7 +1931,7 @@ var MOUNT = {
     function sync(){
       bChange.disabled = bValue.disabled = !rolled;
       el.querySelector("[data-cost-c]").textContent = el.querySelector("[data-cost-v]").textContent = rolled ? "· 모듈 "+cost() : "";
-      el.querySelector("[data-t]").textContent = t; el.querySelector("[data-a]").textContent = a; el.querySelector("[data-h]").textContent = h;
+      el.querySelector("[data-t]").textContent = t; el.querySelector("[data-a]").textContent = a; el.querySelector("[data-h]").textContent = h; el.querySelector("[data-m]").textContent = m15;
       el.querySelector("[data-mod]").textContent = el.querySelector("[data-mod-big]").textContent = mod; el.querySelector("[data-key]").textContent = key;
       el.querySelector("[data-good]").innerHTML = goodText();
     }
@@ -1735,7 +1957,7 @@ var MOUNT = {
     }
     function closePick(){ pending = -1; pickBox.hidden = true; }
     function finish(){
-      cur.forEach(function(c,k){ if(c && !lock[k] && c.t>=11) h++; });
+      cur.forEach(function(c,k){ if(c && !lock[k] && c.t>=11) h++; if(c && !lock[k] && c.t===14) m15++; });
       var c3 = cur[2]; if(c3 && !lock[2] && !c3.kept && OV_FX[c3.e].good && OV_FX[c3.e].n!=="최대 장탄 수 증가") good3++;   // 장탄 수는 제외
       if(cur[0] && cur[1] && cur[2]) a++;
       lock = lock.map(function(lk){ return lk==="key" ? null : lk; });   // 락 키 잠금은 한 번 쓰면 풀림
@@ -1801,8 +2023,9 @@ var MOUNT = {
     bFirst.addEventListener("click", function(){ roll(true); });
     bChange.addEventListener("click", function(){ roll(false); });
     bValue.addEventListener("click", rerollValues);
+    el.querySelector("[data-auto]").addEventListener("click", function(){ ovSimOpen(this); });
     el.querySelector("[data-reset]").addEventListener("click", function(){
-      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; closePick(); sync(); paint(false);
+      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; m15 = 0; closePick(); sync(); paint(false);
     });
     sync(); paint(false);
   },
@@ -2023,6 +2246,7 @@ document.querySelectorAll(".theme-btn").forEach(function(b){ b.addEventListener(
 document.addEventListener("keydown", function(e){
   if(e.metaKey || e.ctrlKey || e.altKey) return;
   var typing = /INPUT|TEXTAREA/.test((e.target||{}).tagName||"");
+  if(ovsimEl && !ovsimEl.hidden){ if(e.key==="Escape"){ e.preventDefault(); ovSimClose(); } return; }
   if(!help.hidden){ if(e.key==="Escape"){ toggleHelp(false); } return; }
   if(!deck.hidden){
     if(e.key==="ArrowRight"||e.key==="PageDown"){ e.preventDefault(); go(cur+1); }
