@@ -673,6 +673,16 @@ img{max-width:100%}
 .ov-modbig{flex:none;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface)}
 .ov-modbig img{width:44px;height:44px;object-fit:contain}
 .ov-modbig .num{font-size:30px;font-weight:800;line-height:1;color:var(--ink);min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+.ov-modbig .num.low{color:var(--bad,#d64545)}
+.ov-own{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.ov-ownrow{display:flex;gap:8px}
+.ov-own .ov-modbig{padding:4px 12px 4px 6px;gap:6px}
+.ov-own .ov-modbig img{width:36px;height:36px}
+.ov-own .ov-modbig .num{font-size:24px;min-width:3ch}
+.ov-statrow{flex-wrap:wrap}
+.ov-statrow .ovl-stats{flex:1 1 260px}
+.ov-statrow .ovl-stats > span{white-space:normal}
+@media (max-width:560px){ .ov-own{flex:1 1 100%;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px} .ov-ownrow{flex:none} .ov-own .ov-modbig{padding:4px 8px 4px 4px} .ov-own .ov-modbig img{width:32px;height:32px} .ov-own .ov-modbig .num{font-size:22px} }
 .btn-sm.icon-only{padding-inline:0;width:32px;justify-content:center}
 .btn-sm.icon-only svg{width:15px;height:15px}
 .btn-sm.icon-only svg{margin:0}
@@ -819,6 +829,14 @@ img{max-width:100%}
 .ckit img{width:40px;height:40px;object-fit:contain}
 .ckit b{font-size:12.5px;line-height:1.3;text-align:center}
 .ckit-x{font-size:11px;color:var(--ink-3);line-height:1.3}
+.ckit-own{font-weight:700;color:var(--ink-2)} .ckit-own.low{color:var(--warn)}
+.ckit.nokit{opacity:.55}
+.ckit.nokit .ckit-p{color:var(--ink-3)}
+.col-statrow{display:flex;align-items:center;gap:10px;margin-top:6px}
+.col-statrow .col-stats{flex:1;min-width:0;margin-top:0}
+.col-mode{flex:none;height:26px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;font-weight:600;color:var(--ink-2)}
+.col-mode:hover{border-color:var(--accent);color:var(--accent)}
+.col-mode[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .ckit b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .ckit-p{font-size:13px;font-weight:700;color:var(--accent)}
 .col-ctrl{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap;margin-top:10px}
@@ -836,7 +854,7 @@ img{max-width:100%}
 .col-tbl td.cur{background:var(--accent-soft);font-weight:700;color:var(--accent-ink)}
 .col-tbl tr.mile td{background:color-mix(in srgb,var(--burst) 10%,transparent)}
 .col-tbl tr.mile td.cur{background:var(--accent-soft)}
-@media (min-width:901px) and (max-height:820px){ .ckit-x{display:none} .ckit-h{margin-bottom:2px} }
+
 @media (max-width:620px){ .col-stage{height:150px} .ckit b{font-size:11.5px} .ckit img{width:44px;height:44px} }
 
 /* 오버로드 강화 */
@@ -1386,6 +1404,8 @@ var COL_RATE = {
 };
 var COL_REQ = {R:1000, SR:3000};
 var COL_KIT = [{n:"초급자용 관리 키트", x:200, img:I("management kit beginner")},{n:"중급자용 관리 키트", x:500, img:I("management kit intermediate")},{n:"상급자용 관리 키트", x:1000, img:I("management kit advanced")}];
+var COL_INV = [260, 100, 50];   // 제한 모드 기본 보유량 (추천표대로 진행 시 SR 15 완성 약 75%)
+var OV_INV = {mod:100, key:300};   // 17p 오버로드 기본 보유량 (커스텀 모듈 · 커스텀 락 키)
 var COL_IMG = I("운동 지휘관 인형");   // 소장품 이미지 (단계와 무관하게 고정) → ./images/items/운동 지휘관 인형.webp
 
 /* ── 소장품 자동으로 돌려보기: R0 → R15 → SR5 → SR15 (레벨업 시 초과 경험치 초기화) ── */
@@ -1883,7 +1903,7 @@ function widgetHTML(b){
     }
     return head("레벨 분배 비교")+'<div class="sync2">'+panel("x")+panel("o")+'</div>';
   case "w-collect":
-    var kits = COL_KIT.map(function(k,i){ return '<button class="ckit" type="button" data-kit="'+i+'" aria-pressed="'+(i===0)+'"><span class="ckit-h">ITEM</span><img src="'+k.img+'" alt=""><b>'+k.n+'</b><span class="ckit-x">경험치 +'+k.x+' · 10개</span><span class="ckit-p num" data-kp="'+i+'"></span></button>'; }).join("");
+    var kits = COL_KIT.map(function(k,i){ return '<button class="ckit" type="button" data-kit="'+i+'" aria-pressed="'+(i===0)+'"><span class="ckit-h">ITEM</span><img src="'+k.img+'" alt=""><b>'+k.n+'</b><span class="ckit-x">보유 <b class="ckit-own" data-own="'+i+'">–</b></span><span class="ckit-p num" data-kp="'+i+'"></span></button>'; }).join("");
     return '<div class="w-h col-h"><b>'+ICO.spark+'소장품 관리 직접 하기</b><span class="col-hr"><span class="col-path" aria-label="진행 등급"><i data-path="R">R 0→15</i>'+ICO.arrow+'<i data-path="SR">SR 5→15</i></span></span><button class="btn-sm auto col-auto" type="button" data-cauto>'+ICO.play+'자동으로 돌려보기</button></div>'+
       '<div class="col-stage" data-stage><img data-col alt="소장품"><div class="col-burst" data-burst></div><div class="col-notice">대성공 확률 <b class="num" data-rate>–</b></div>'+
         '<div class="col-rub" data-rub hidden><p>좌우로 문질러 주세요</p><div class="col-rub-bar"><i data-rubfill></i></div><b class="num" data-rubpct>0%</b></div></div>'+
@@ -1893,7 +1913,7 @@ function widgetHTML(b){
       '<div class="col-ctrl"><span class="col-rep"><span>반복</span><button class="btn-sm" type="button" data-rep="min">MIN</button><button class="btn-sm icon-only" type="button" data-rep="-1" aria-label="한 번 줄이기">−</button><b class="num" data-repv>1/1</b><button class="btn-sm icon-only" type="button" data-rep="1" aria-label="한 번 늘리기">+</button><button class="btn-sm" type="button" data-rep="max">MAX</button></span>'+
         '<span class="col-go"><label class="col-skip"><input type="checkbox" data-skip> 문지르기 연출 Skip</label><button class="btn-sm icon-only" type="button" data-creset aria-label="처음으로" title="처음으로">'+ICO.reset+'</button><button class="btn-sm primary" type="button" data-manage>'+ICO.spark+'관리하기</button></span></div>'+
       '<div class="w-status col-status" role="status"><i></i><span data-cmsg>키트를 고르고 관리하기를 눌러 보세요.</span></div>'+
-      '<div class="ovl-stats col-stats" data-cstats></div>'+
+      '<div class="col-statrow"><div class="ovl-stats col-stats" data-cstats></div><button class="col-mode" type="button" data-cmode aria-pressed="false" title="키트 개수 제한 없이 체험">∞ 무제한 모드</button></div>'+
       '<details class="ov-table"><summary>확률표 보기</summary><div data-ctable></div><ul class="ul muted"><li>관리 1회에 같은 키트 10개를 사용합니다. 레벨업 요구 경험치: R등급 1,000 · SR등급 3,000</li><li>R등급 15단계를 달성하면 SR등급으로 교체해 SR 5단계부터 이어서 진행합니다.</li><li>반복은 정한 횟수가 끝나거나 다음 단계에 도달하면 멈춥니다.</li><li>대성공 시 0~4 → 5단계, 5~9 → 10단계, 10~14 → 15단계로 한 번에 성장합니다.</li></ul></details>';
   case "w-overload":
     var rows = OV_FX.map(function(f){ return '<tr><td>'+esc(f.n)+(f.good?' <span class="ov-good">유효</span>':'')+'</td><td class="num">'+f.v[0].toFixed(2)+' ~ '+f.v[14].toFixed(2)+'%</td><td class="num">'+f.w+'%</td></tr>'; }).join("");
@@ -1902,7 +1922,9 @@ function widgetHTML(b){
       '<div class="ov-pick" data-pick hidden><span data-pick-t></span><span class="w-actions"><button class="btn-sm primary" type="button" data-pick-mod></button><button class="btn-sm" type="button" data-pick-key></button><button class="btn-sm" type="button" data-pick-no>취소</button></span></div></div>'+
       '<div class="w-actions" style="margin-top:14px;"><span class="w-actions"><button class="btn-sm icon-only" type="button" data-reset aria-label="처음으로" title="처음으로">'+ICO.reset+'</button><button class="btn-sm primary" type="button" data-first>'+ICO.spark+'최초 개조</button><button class="btn-sm primary" type="button" data-change disabled>'+ICO.dice+'옵션 변경 <small data-cost-c></small></button><button class="btn-sm" type="button" data-value disabled>'+ICO.dice+'수치 재설정 <small data-cost-v></small></button><button class="btn-sm auto" type="button" data-auto>'+ICO.play+'자동으로 돌려보기</button></span></div>'+
       '<div class="ov-statrow"><div class="ovl-stats"><span>커스텀 모듈 <span class="num" data-mod>0</span>개 · 커스텀 락 키 <span class="num" data-key>0</span>개 소모</span><span>시도 <span class="num" data-t>0</span>회 · 3줄 <span class="num" data-a>0</span>회 · 12단계 이상 <span class="num" data-h>0</span>회 · 15단계 <span class="num" data-m>0</span>회</span><span data-good></span></div>'+
-      '<div class="ov-modbig" aria-label="커스텀 모듈 소모">'+img(I("custom module"),"item","커스텀 모듈")+'<span class="num" data-mod-big>0</span></div></div>'+
+      '<div class="ov-own"><div class="ov-ownrow"><div class="ov-modbig" title="보유 커스텀 모듈" aria-label="보유 커스텀 모듈">'+img(I("custom module"),"item","커스텀 모듈")+'<span class="num" data-mod-big>0</span></div>'+
+        '<div class="ov-modbig key" title="보유 커스텀 락 키" aria-label="보유 커스텀 락 키">'+img(I("custom lock key"),"item","커스텀 락 키")+'<span class="num" data-key-big>0</span></div></div>'+
+        '<button class="col-mode" type="button" data-omode aria-pressed="false" title="모듈·락 키 개수 제한 없이 체험">∞ 무제한 모드</button></div></div>'+
       '<details class="ov-table"><summary>확률표 보기</summary>'+
         '<table><thead><tr><th>효과</th><th>수치 범위</th><th>확률</th></tr></thead><tbody>'+rows+'</tbody></table>'+
         '<ul class="ul muted"><li>단계별 확률은 효과 확률 안에서 1~5단계 각 12%, 6~10단계 각 7%, 11~15단계 각 1%입니다. (예: 확률 10% 효과 → 1.2% · 0.7% · 0.1%)</li>'+
@@ -2194,7 +2216,11 @@ var MOUNT = {
     var pickBox = el.querySelector("[data-pick]");
     var cur = [null,null,null], lock = [null,null,null], rolled = false, t = 0, a = 0, h = 0, mod = 0, key = 0, pending = -1;
     var GOOD = OV_FX.map(function(f,i){ return f.good ? i : -1; }).filter(function(i){ return i>=0; });
-    var good3 = 0, m15 = 0;   // m15: 새로 나온 15단계(최대) 횟수 (잠겨서 유지된 줄은 제외)
+    var good3 = 0, m15 = 0;
+    var unlimited = false, own = {mod:OV_INV.mod, key:OV_INV.key};   // 기본은 보유 개수 제한 모드
+    function canMod(n){ return unlimited || own.mod >= n; }
+    function canKey(n){ return unlimited || own.key >= n; }
+    function spend(kind, n){ if(kind==="mod") mod += n; else key += n; if(!unlimited) own[kind] -= n; }   // m15: 새로 나온 15단계(최대) 횟수 (잠겨서 유지된 줄은 제외)
       // 3번째 줄(30%)에 유효 옵션이 새로 나온 횟수 (잠겨서 유지된 줄은 제외)
     function goodText(){ return '3번째 줄 유효 옵션(우월코드·공격력) <span class="num">'+good3+'</span>회'; }
     var LOCK_MOD = [1,2], LOCK_KEY = [20,30];            // 1번째·2번째 잠금 비용
@@ -2203,10 +2229,15 @@ var MOUNT = {
     function pick(ws){ var tot = 0, i; for(i=0;i<ws.length;i++) tot += ws[i]; var r = Math.random()*tot; for(i=0;i<ws.length;i++){ r -= ws[i]; if(r < 0) return i; } return ws.length-1; }
     function rerollTier(prev){ return pick(OV_TIER.map(function(w,i){ return i===prev ? 0 : w; })); }
     function sync(){
-      bChange.disabled = bValue.disabled = !rolled;
+      bFirst.disabled = !canMod(1) || (!unlimited && rolled);   // 제한 모드: 최초 개조는 한 번만 (처음으로 누르면 다시 가능)
+      bChange.disabled = bValue.disabled = !rolled || !canMod(cost());
       el.querySelectorAll("[data-cost-c],[data-cost-v]").forEach(function(x){ x.textContent = "· 모듈 "+(rolled ? cost() : 1); x.style.visibility = rolled ? "" : "hidden"; });   // 개조 전에도 자리를 잡아 버튼 폭·줄바꿈이 바뀌지 않게
       el.querySelector("[data-t]").textContent = t; el.querySelector("[data-a]").textContent = a; el.querySelector("[data-h]").textContent = h; el.querySelector("[data-m]").textContent = m15;
-      el.querySelector("[data-mod]").textContent = el.querySelector("[data-mod-big]").textContent = mod; el.querySelector("[data-key]").textContent = key;
+      el.querySelector("[data-mod]").textContent = mod; el.querySelector("[data-key]").textContent = key;
+      var mb = el.querySelector("[data-mod-big]"), kb = el.querySelector("[data-key-big]");
+      mb.textContent = unlimited ? "∞" : own.mod; kb.textContent = unlimited ? "∞" : own.key;
+      mb.classList.toggle("low", !unlimited && own.mod < 10); kb.classList.toggle("low", !unlimited && own.key < LOCK_KEY[0]);
+      var md = el.querySelector("[data-omode]"); md.setAttribute("aria-pressed", unlimited); md.textContent = unlimited ? "∞ 무제한 모드 켜짐" : "∞ 무제한 모드";
       el.querySelector("[data-good]").innerHTML = goodText();
     }
     function paint(anim){
@@ -2241,7 +2272,9 @@ var MOUNT = {
     function roll(first){
       if(!first && !rolled) return;
       closePick();
-      if(first){ lock = [null,null,null]; mod += 1; } else mod += cost();
+      if(!canMod(first ? 1 : cost())) return;
+      if(first && rolled && !unlimited) return;
+      if(first){ lock = [null,null,null]; spend("mod", 1); } else spend("mod", cost());
       var taken = {}, next = [];
       lock.forEach(function(lk,k){ if(lk && cur[k]) taken[cur[k].e] = 1; });   // 잠긴 효과는 다른 줄에 안 나옴
       for(var k=0;k<3;k++){
@@ -2259,8 +2292,9 @@ var MOUNT = {
     /* 수치 재설정: 효과는 그대로, 잠기지 않은 줄의 단계만 다시 뽑음 */
     function rerollValues(){
       if(!rolled) return;
+      if(!canMod(cost())) return;
       closePick();
-      mod += cost();
+      spend("mod", cost());
       cur = cur.map(function(c,k){
         if(!c) return c;
         if(lock[k]) return {e:c.e, t:c.t, dup:false, kept:lock[k]};
@@ -2277,12 +2311,16 @@ var MOUNT = {
       el.querySelector("[data-pick-t]").textContent = (k+1)+"번째 효과 잠그기";
       el.querySelector("[data-pick-mod]").textContent = "커스텀 모듈 "+LOCK_MOD[n]+"개 · 영구 잠금";
       el.querySelector("[data-pick-key]").textContent = "커스텀 락 키 "+LOCK_KEY[n]+"개";
+      el.querySelector("[data-pick-mod]").disabled = !canMod(LOCK_MOD[n]);
+      el.querySelector("[data-pick-key]").disabled = !canKey(LOCK_KEY[n]);
       pickBox.hidden = false;
     }
     function doLock(kind){
       if(pending<0) return;
       var n = nLock();
-      if(kind==="mod") mod += LOCK_MOD[n]; else key += LOCK_KEY[n];
+      var need = kind==="mod" ? LOCK_MOD[n] : LOCK_KEY[n];
+      if(kind==="mod" ? !canMod(need) : !canKey(need)) return;
+      spend(kind, need);
       lock[pending] = kind; closePick(); sync(); paint(false);
     }
     el.addEventListener("click", function(e){
@@ -2299,17 +2337,23 @@ var MOUNT = {
     bValue.addEventListener("click", rerollValues);
     el.querySelector("[data-auto]").addEventListener("click", function(){ ovSimOpen(this); });
     el.querySelector("[data-reset]").addEventListener("click", function(){
-      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; m15 = 0; closePick(); sync(); paint(false);
+      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; m15 = 0; own = {mod:OV_INV.mod, key:OV_INV.key}; closePick(); sync(); paint(false);
+    });
+    el.querySelector("[data-omode]").addEventListener("click", function(){
+      unlimited = !unlimited; if(!unlimited) own = {mod:OV_INV.mod, key:OV_INV.key};   // 제한 모드로 돌아오면 기본 수량으로 다시 채움
+      closePick(); sync(); paint(false);
     });
     sync(); paint(false);
   },
   "w-collect": function(el, b){
     var g = "R", lv = 0, exp = 0, kit = 0, rep = 1, busy = false, st = {n:0, great:0, used:[0,0,0]}, hist = [];
+    var unlimited = false, inv = COL_INV.slice();   // 기본은 개수 제한 모드
+    function has(k){ return unlimited || inv[k] >= 10; }
     var KN = ["초급","중급","상급"];
     var $ = function(q){ return el.querySelector(q); };
     var stage = $("[data-stage]"), rub = $("[data-rub]");
     function rate(k){ return lv>=15 ? 0 : COL_RATE[g][lv][k===undefined?kit:k]; }
-    function maxRep(){ if(lv>=15) return 0; return Math.max(1, Math.ceil((COL_REQ[g]-exp)/COL_KIT[kit].x)); }
+    function maxRep(){ if(lv>=15) return 0; var m = Math.max(1, Math.ceil((COL_REQ[g]-exp)/COL_KIT[kit].x)); if(!unlimited) m = Math.min(m, Math.floor(inv[kit]/10)); return Math.max(unlimited?1:0, m); }
     function fmt(v){ return (v%1 ? v.toFixed(1) : v)+"%"; }
     function table(){
       var h = '<table class="col-tbl"><thead><tr><th>단계</th><th>초급</th><th>중급</th><th>상급</th></tr></thead><tbody>';
@@ -2337,7 +2381,10 @@ var MOUNT = {
       $("[data-exp]").textContent = lv>=15 ? "MAX" : exp.toLocaleString()+" / "+COL_REQ[g].toLocaleString();
       $("[data-expfill]").style.width = (lv>=15 ? 100 : exp/COL_REQ[g]*100)+"%";
       $("[data-rate]").textContent = lv>=15 ? "–" : fmt(rate());
-      var mx = maxRep(); rep = Math.max(lv>=15?0:1, Math.min(rep, mx));
+      var mx = maxRep(); rep = Math.max((lv>=15 || mx===0)?0:1, Math.min(rep, mx));
+      el.querySelectorAll("[data-own]").forEach(function(x){ var k = +x.dataset.own; x.textContent = unlimited ? "∞" : inv[k].toLocaleString(); x.classList.toggle("low", !unlimited && inv[k] < 10); });
+      el.querySelectorAll("[data-kit]").forEach(function(x){ x.classList.toggle("nokit", !has(+x.dataset.kit)); });
+      var md = $("[data-cmode]"); md.setAttribute("aria-pressed", unlimited); md.textContent = unlimited ? "∞ 무제한 모드 켜짐" : "∞ 무제한 모드";
       $("[data-repv]").textContent = rep+"/"+mx;
       // 반복 횟수만큼 관리했을 때(대성공 없음 가정) 채워질 경험치를 게이지에 미리 표시
       var pre = lv>=15 ? 0 : Math.min(COL_REQ[g], exp + (busy ? remain : rep)*COL_KIT[kit].x);
@@ -2347,8 +2394,8 @@ var MOUNT = {
       mb.innerHTML = swap ? ICO.arrow+"SR등급으로 교체 (5단계부터)" : end ? ICO.check+"결과 요약 보기" : ICO.spark+"관리하기";
       mb.classList.toggle("swap", swap);
       mb.classList.toggle("sum", end);
-      mb.disabled = busy;
-      el.querySelectorAll("[data-rep],[data-kit],[data-creset]").forEach(function(x){ x.disabled = busy || (x.dataset.creset===undefined && (swap || end)); });
+      mb.disabled = busy || (!swap && !end && !has(kit));
+      el.querySelectorAll("[data-rep],[data-kit],[data-creset],[data-cmode]").forEach(function(x){ x.disabled = busy || (x.dataset.creset===undefined && x.dataset.cmode===undefined && (swap || end)); });
       $("[data-cstats]").innerHTML = '<span>관리 <span class="num">'+st.n+'</span>회 · 대성공 <span class="num">'+st.great+'</span>회 · 사용 키트 초급 <span class="num">'+st.used[0]+'</span> · 중급 <span class="num">'+st.used[1]+'</span> · 상급 <span class="num">'+st.used[2]+'</span>개</span>';
       $("[data-ctable]").innerHTML = table();
     }
@@ -2379,11 +2426,15 @@ var MOUNT = {
         } else {
           msg("관리 "+done+"회 · 경험치 +"+gained.toLocaleString()+" (대성공 없음)", "");
         }
-        busy = false; remain = 0; rep = 1; paint();
+        busy = false; remain = 0; rep = 1;
+        if(!unlimited && lv<15 && !has(0) && !has(1) && !has(2)) msg("보유 키트를 모두 사용했습니다 — SR 15단계까지 "+(g==="R"?"R ":"SR ")+lv+"단계에서 멈췄습니다. 무제한 모드로 이어가거나 처음으로 돌아가세요.", "bad");
+        else if(!unlimited && lv<15 && !has(k)) msg($("[data-cmsg]").textContent+" · "+COL_KN[k]+" 키트가 부족합니다", "");
+        paint();
       }
       function step(){
         if(lv>=15 || done>=total){ finish(); return; }
-        var r = rate(); st.n++; done++; remain = total - done; st.used[k] += 10;
+        if(!unlimited && inv[k] < 10){ finish(); return; }
+        var r = rate(); st.n++; done++; remain = total - done; st.used[k] += 10; if(!unlimited) inv[k] -= 10;
         if(Math.random()*100 < r){ great = true; st.great++; lv = Math.min(15, Math.floor(lv/5)*5+5); exp = 0; finish(); return; }
         exp += COL_KIT[k].x; gained += COL_KIT[k].x;
         if(exp >= COL_REQ[g]){ paint(); setTimeout(function(){ exp = 0; lv++; finish(); }, 260); return; }   // 레벨업 시 초과 경험치는 초기화
@@ -2439,14 +2490,18 @@ var MOUNT = {
         '<p class="ovsim-goal">R 0단계 → R 15단계 → <b>SR 15단계 달성</b> · 관리 <b>'+st.n+'</b>회 · 대성공 <b>'+st.great+'</b>회</p>'+
         '<h4>키트 사용량</h4><table><thead><tr><th>구간</th><th>관리</th><th>대성공</th><th>초급</th><th>중급</th><th>상급</th></tr></thead><tbody>'+
         row("R 0 → 15", seg.R)+row("SR 5 → 15", seg.SR)+'<tr class="tot"><td>합계</td><td>'+all.n+'회</td><td>'+all.great+'회</td><td>'+all.used[0]+'</td><td>'+all.used[1]+'</td><td>'+all.used[2]+'</td></tr></tbody></table>'+
-        '<p class="ovsim-legend">초급 환산 (경험치 비율 초 1 : 중 2.5 : 상 5) 약 <b>'+Math.round(eq(all.used)).toLocaleString()+'</b>개 · 참고: 초급만 쓰면 평균 약 830개</p>'+
+        (unlimited ? '' : '<p class="ovsim-legend">남은 키트 초급 <b>'+inv[0]+'</b> · 중급 <b>'+inv[1]+'</b> · 상급 <b>'+inv[2]+'</b>개 (시작: '+COL_INV.join(' · ')+')</p>')+'<p class="ovsim-legend">초급 환산 (경험치 비율 초 1 : 중 2.5 : 상 5) 약 <b>'+Math.round(eq(all.used)).toLocaleString()+'</b>개 · 참고: 초급만 쓰면 평균 약 830개</p>'+
         '<h4>전체 과정 <small>관리하기 1번 = 한 줄</small></h4><ol class="ovsim-log">'+log+'</ol>'+
         '<div class="ovsim-run" style="margin-top:14px"><button class="btn-sm primary" type="button" data-colsum-close>닫기</button></div>';
       var cs = document.getElementById("colsum"); cs.hidden = false;
       setTimeout(function(){ var x = cs.querySelector("[data-colsum-close]"); if(x) x.focus(); }, 30);
     }
     $("[data-cauto]").addEventListener("click", function(){ colSimOpen(this); });
-    $("[data-creset]").addEventListener("click", function(){ g = "R"; lv = 0; exp = 0; rep = 1; hist = []; st = {n:0, great:0, used:[0,0,0]}; msg("처음 상태로 돌아갔습니다.", ""); paint(); });
+    $("[data-cmode]").addEventListener("click", function(){
+      unlimited = !unlimited; if(!unlimited) inv = COL_INV.slice();
+      msg(unlimited ? "무제한 모드: 키트 개수 제한 없이 진행합니다." : "제한 모드: 보유 키트 초급 "+COL_INV[0]+" · 중급 "+COL_INV[1]+" · 상급 "+COL_INV[2]+"개로 다시 채웠습니다.", ""); paint();
+    });
+    $("[data-creset]").addEventListener("click", function(){ inv = COL_INV.slice(); g = "R"; lv = 0; exp = 0; rep = 1; hist = []; st = {n:0, great:0, used:[0,0,0]}; msg("처음 상태로 돌아갔습니다.", ""); paint(); });
     paint();
   },
   "w-daily": function(el, b){
