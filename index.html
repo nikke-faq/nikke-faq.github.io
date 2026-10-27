@@ -698,6 +698,12 @@ img{max-width:100%}
 .ovsim{position:fixed;inset:0;z-index:75;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px}
 .ovsim-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);width:min(660px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;box-shadow:var(--shadow);padding:22px 22px 18px}
 .ovsim-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+/* 팝업 스크롤바: 둥근 모서리를 가리지 않도록 위아래 여백을 두고 얇게 */
+.ovsim-card::-webkit-scrollbar{width:10px}
+.ovsim-card::-webkit-scrollbar-track{background:transparent;margin:var(--r-lg) 0}
+.ovsim-card::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--ink-3) 45%,transparent);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+.ovsim-card::-webkit-scrollbar-thumb:hover{background-color:color-mix(in srgb,var(--ink-3) 70%,transparent)}
+@supports (-moz-appearance:none){ .ovsim-card{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink-3) 45%,transparent) transparent} }
 .ovsim-h h3{font-size:18px;display:flex;align-items:center;gap:8px}
 .ovsim-h h3 svg{width:16px;height:16px;color:var(--burst)}
 .ovsim-x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2)}
@@ -808,6 +814,7 @@ img{max-width:100%}
 .col-sim-u{grid-column:1 / -1;font-size:11.5px;color:var(--ink-3)}
 #colsim .ovsim-log li em{min-width:28px}
 .ovsim tr.tot td{font-weight:700;color:var(--ink);border-top:1.5px solid var(--ink-3)}
+.ovsim table.ov-fin th:nth-child(2),.ovsim table.ov-fin td:nth-child(2){text-align:left}
 #colsum .ovsim-log li em{min-width:28px}
 .col-pips{align-items:center;gap:5px;height:20px;padding:0 8px;border-radius:999px;background:#2E49F5}   /* 등급 색 캡슐 · 흰 점 → 5·10·15단계 달성 시 흰 별 */
 .col-pips.g-sr{background:#8A3FE0}
@@ -841,6 +848,7 @@ img{max-width:100%}
 .ckit-p{font-size:13px;font-weight:700;color:var(--accent)}
 .col-ctrl{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap;margin-top:10px}
 .col-go{display:flex;align-items:center;gap:8px;margin-left:auto}
+.col-go [data-manage]{min-width:118px;justify-content:center}   /* 관리하기 · SR등급 교체 · 결과 요약 버튼 폭 고정 */
 .col-rep{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-2)}
 .col-rep > span{margin-right:2px}
 .col-rep b{min-width:44px;text-align:center;font-size:14px;color:var(--ink)}
@@ -2220,7 +2228,10 @@ var MOUNT = {
     var unlimited = false, own = {mod:OV_INV.mod, key:OV_INV.key};   // 기본은 보유 개수 제한 모드
     function canMod(n){ return unlimited || own.mod >= n; }
     function canKey(n){ return unlimited || own.key >= n; }
-    function spend(kind, n){ if(kind==="mod") mod += n; else key += n; if(!unlimited) own[kind] -= n; }   // m15: 새로 나온 15단계(최대) 횟수 (잠겨서 유지된 줄은 제외)
+    function spend(kind, n){ if(kind==="mod") mod += n; else key += n; if(!unlimited) own[kind] -= n; }
+    var use = {c:0, v:0, cm:0, vm:0, lm:0, lk:0, nm:0, nk:0};   // 결과 요약용: 옵션 변경/수치 재설정 횟수·모듈, 잠금 모듈·락 키, 잠금 횟수
+    var chgHTML = bChange.innerHTML, sumMode = false;
+    function isOut(){ return !unlimited && rolled && own.mod < cost(); }   // 제한 모드에서 다음 변경 비용이 모자람   // m15: 새로 나온 15단계(최대) 횟수 (잠겨서 유지된 줄은 제외)
       // 3번째 줄(30%)에 유효 옵션이 새로 나온 횟수 (잠겨서 유지된 줄은 제외)
     function goodText(){ return '3번째 줄 유효 옵션(우월코드·공격력) <span class="num">'+good3+'</span>회'; }
     var LOCK_MOD = [1,2], LOCK_KEY = [20,30];            // 1번째·2번째 잠금 비용
@@ -2230,7 +2241,14 @@ var MOUNT = {
     function rerollTier(prev){ return pick(OV_TIER.map(function(w,i){ return i===prev ? 0 : w; })); }
     function sync(){
       bFirst.disabled = !canMod(1) || (!unlimited && rolled);   // 제한 모드: 최초 개조는 한 번만 (처음으로 누르면 다시 가능)
-      bChange.disabled = bValue.disabled = !rolled || !canMod(cost());
+      var out = isOut();
+      if(out !== sumMode){
+        if(out) bChange.style.minWidth = bChange.offsetWidth+"px";   // 버튼 폭 유지
+        bChange.innerHTML = out ? ICO.check+"결과 요약" : chgHTML; sumMode = out;
+        bChange.classList.toggle("ov-sumbtn", out);
+      }
+      bChange.disabled = !rolled || (!out && !canMod(cost()));
+      bValue.disabled = !rolled || !canMod(cost());
       el.querySelectorAll("[data-cost-c],[data-cost-v]").forEach(function(x){ x.textContent = "· 모듈 "+(rolled ? cost() : 1); x.style.visibility = rolled ? "" : "hidden"; });   // 개조 전에도 자리를 잡아 버튼 폭·줄바꿈이 바뀌지 않게
       el.querySelector("[data-t]").textContent = t; el.querySelector("[data-a]").textContent = a; el.querySelector("[data-h]").textContent = h; el.querySelector("[data-m]").textContent = m15;
       el.querySelector("[data-mod]").textContent = mod; el.querySelector("[data-key]").textContent = key;
@@ -2274,7 +2292,7 @@ var MOUNT = {
       closePick();
       if(!canMod(first ? 1 : cost())) return;
       if(first && rolled && !unlimited) return;
-      if(first){ lock = [null,null,null]; spend("mod", 1); } else spend("mod", cost());
+      if(first){ lock = [null,null,null]; spend("mod", 1); use.cm += 1; } else { use.c++; use.cm += cost(); spend("mod", cost()); }
       var taken = {}, next = [];
       lock.forEach(function(lk,k){ if(lk && cur[k]) taken[cur[k].e] = 1; });   // 잠긴 효과는 다른 줄에 안 나옴
       for(var k=0;k<3;k++){
@@ -2294,6 +2312,7 @@ var MOUNT = {
       if(!rolled) return;
       if(!canMod(cost())) return;
       closePick();
+      use.v++; use.vm += cost();
       spend("mod", cost());
       cur = cur.map(function(c,k){
         if(!c) return c;
@@ -2321,6 +2340,7 @@ var MOUNT = {
       var need = kind==="mod" ? LOCK_MOD[n] : LOCK_KEY[n];
       if(kind==="mod" ? !canMod(need) : !canKey(need)) return;
       spend(kind, need);
+      if(kind==="mod"){ use.lm += need; use.nm++; } else { use.lk += need; use.nk++; }
       lock[pending] = kind; closePick(); sync(); paint(false);
     }
     el.addEventListener("click", function(e){
@@ -2333,11 +2353,32 @@ var MOUNT = {
     el.querySelector("[data-pick-key]").addEventListener("click", function(){ doLock("key"); });
     el.querySelector("[data-pick-no]").addEventListener("click", closePick);
     bFirst.addEventListener("click", function(){ roll(true); });
-    bChange.addEventListener("click", function(){ roll(false); });
+    bChange.addEventListener("click", function(){ if(sumMode) showSummary(); else roll(false); });
+    function showSummary(){
+      var fin = cur.map(function(c,k){
+        if(!c) return '<tr><td>'+(k+1)+'번째 줄</td><td>효과 없음</td><td>—</td><td>—</td></tr>';
+        var f = OV_FX[c.e];
+        return '<tr><td>'+(k+1)+'번째 줄</td><td>'+esc(f.n)+(f.good?' <span class="ov-good">유효</span>':'')+(lock[k]?' <small class="muted">· '+(lock[k]==="mod"?"영구 잠금":"락 키 잠금")+'</small>':'')+'</td><td>'+f.v[c.t].toFixed(2)+'%</td><td>'+(c.t+1)+'단계</td></tr>';
+      }).join("");
+      var row = function(l,n,m,k){ return '<tr><td>'+l+'</td><td>'+n+'회</td><td>'+m+'</td><td>'+k+'</td></tr>'; };
+      document.getElementById("colsumTitle").textContent = "오버로드 결과 요약";
+      document.getElementById("colsumBody").innerHTML =
+        '<p class="ovsim-goal">'+(own.mod>0 ? '남은 모듈 <b>'+own.mod+'</b>개로는 다음 변경(모듈 '+cost()+'개)을 할 수 없습니다' : '커스텀 모듈 <b>'+OV_INV.mod+'</b>개를 다 썼습니다')+' · 시도 <b>'+t+'</b>회 · 3줄 등장 <b>'+a+'</b>회</p>'+
+        '<h4>최종 옵션</h4><table class="ov-fin"><thead><tr><th>줄</th><th>효과</th><th>수치</th><th>단계</th></tr></thead><tbody>'+fin+'</tbody></table>'+
+        '<h4>사용량</h4><table><thead><tr><th>항목</th><th>횟수</th><th>모듈</th><th>락 키</th></tr></thead><tbody>'+
+          row("최초 개조",1,1,0)+row("옵션 변경",use.c,use.cm-1,0)+row("수치 재설정",use.v,use.vm,0)+row("모듈 잠금",use.nm,use.lm,0)+row("락 키 잠금",use.nk,0,use.lk)+
+          '<tr class="tot"><td>합계</td><td>'+(1+use.c+use.v+use.nm+use.nk)+'회</td><td>'+mod+'</td><td>'+key+'</td></tr></tbody></table>'+
+        '<p class="ovsim-legend">남은 커스텀 모듈 <b>'+own.mod+'</b>개 · 커스텀 락 키 <b>'+own.key+'</b>개 (시작: '+OV_INV.mod+' · '+OV_INV.key+')</p>'+
+        '<h4>기록</h4><ul class="ul muted"><li>12단계 이상 <b>'+h+'</b>회 · 15단계 <b>'+m15+'</b>회</li><li>3번째 줄 유효 옵션(우월코드·공격력) <b>'+good3+'</b>회</li></ul>'+
+        '<p class="ovsim-legend">참고: 추천 방법(모듈 잠금)으로 효과만 완성하면 평균 약 47개 · 모듈 100개로 11단계 이상까지 완성할 확률 약 41%</p>'+
+        '<div class="ovsim-run" style="margin-top:14px"><button class="btn-sm primary" type="button" data-colsum-close>닫기</button></div>';
+      var cs = document.getElementById("colsum"); cs.hidden = false;
+      setTimeout(function(){ var x = cs.querySelector("[data-colsum-close]"); if(x) x.focus(); }, 30);
+    }
     bValue.addEventListener("click", rerollValues);
     el.querySelector("[data-auto]").addEventListener("click", function(){ ovSimOpen(this); });
     el.querySelector("[data-reset]").addEventListener("click", function(){
-      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; m15 = 0; own = {mod:OV_INV.mod, key:OV_INV.key}; closePick(); sync(); paint(false);
+      cur = [null,null,null]; lock = [null,null,null]; rolled = false; t = a = h = mod = key = 0; good3 = 0; m15 = 0; own = {mod:OV_INV.mod, key:OV_INV.key}; use = {c:0, v:0, cm:0, vm:0, lm:0, lk:0, nm:0, nk:0}; closePick(); sync(); paint(false);
     });
     el.querySelector("[data-omode]").addEventListener("click", function(){
       unlimited = !unlimited; if(!unlimited) own = {mod:OV_INV.mod, key:OV_INV.key};   // 제한 모드로 돌아오면 기본 수량으로 다시 채움
@@ -2391,7 +2432,7 @@ var MOUNT = {
       $("[data-exppre]").style.width = (lv>=15 ? 0 : pre/COL_REQ[g]*100)+"%";
       $("[data-exp]").innerHTML = lv>=15 ? "MAX" : exp.toLocaleString()+(pre>exp ? ' <span class="col-pre">→ '+pre.toLocaleString()+'</span>' : '')+" / "+COL_REQ[g].toLocaleString();
       var mb = $("[data-manage]");
-      mb.innerHTML = swap ? ICO.arrow+"SR등급으로 교체 (5단계부터)" : end ? ICO.check+"결과 요약 보기" : ICO.spark+"관리하기";
+      mb.innerHTML = swap ? ICO.arrow+"SR등급 교체" : end ? ICO.check+"결과 요약" : ICO.spark+"관리하기";   // 글자 수를 비슷하게 맞춰 줄바꿈 방지
       mb.classList.toggle("swap", swap);
       mb.classList.toggle("sum", end);
       mb.disabled = busy || (!swap && !end && !has(kit));
@@ -2486,6 +2527,7 @@ var MOUNT = {
         t += h.great ? " · <b>대성공</b>" : (h.to>h.from ? " · 레벨업" : " · 경험치 +"+h.gained.toLocaleString());
         return '<li class="'+(h.great?"ok":(h.to>h.from?"k":""))+'"><em>'+(i+1)+'</em><span>'+t+'</span></li>';
       }).join("");
+      document.getElementById("colsumTitle").textContent = "관리 결과 요약";
       document.getElementById("colsumBody").innerHTML =
         '<p class="ovsim-goal">R 0단계 → R 15단계 → <b>SR 15단계 달성</b> · 관리 <b>'+st.n+'</b>회 · 대성공 <b>'+st.great+'</b>회</p>'+
         '<h4>키트 사용량</h4><table><thead><tr><th>구간</th><th>관리</th><th>대성공</th><th>초급</th><th>중급</th><th>상급</th></tr></thead><tbody>'+
