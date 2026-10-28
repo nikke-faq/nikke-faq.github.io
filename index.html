@@ -271,13 +271,26 @@ img{max-width:100%}
 .b-note.center{text-align:center}
 .icons.center{justify-content:center}
 .b-note.accent{color:var(--accent-ink);font-weight:600}
-.b-emph{font-size:clamp(18px,1.8vw,21px);font-weight:700;line-height:1.45;letter-spacing:-.01em;color:var(--ink);padding:16px 18px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
-.b-emph::before{content:"";display:inline-block;width:8px;height:8px;background:var(--burst);transform:rotate(45deg) translateY(-3px);margin-right:12px;border-radius:1px}
-.b-emph.plain{background:none;border:0;padding:0 0 0 20px;text-indent:-20px}
+.b-emph{position:relative;font-size:clamp(18px,1.8vw,21px);font-weight:700;line-height:1.45;letter-spacing:-.01em;color:var(--ink);padding:0 0 0 30px}
+/* 강조 문구: 다이아몬드 불릿 + 불릿 모양 테두리가 밖으로 퍼지며 사라짐 */
+.b-emph::before,.b-emph::after{content:"";position:absolute;left:5px;top:calc(.725em - 5px);width:10px;height:10px;border-radius:2px;transform:rotate(45deg)}
+.b-emph::before{background:var(--burst);box-shadow:0 0 8px color-mix(in srgb,var(--burst) 45%,transparent)}
+.b-emph::after{box-sizing:border-box;border:1.5px solid var(--burst);opacity:0;animation:emphRing 2s cubic-bezier(.2,.6,.35,1) infinite}
+@keyframes emphRing{0%{transform:rotate(45deg) scale(1);opacity:.9}70%{opacity:.15}100%{transform:rotate(45deg) scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .b-emph::after{animation:none;opacity:0} }
+.b-emph.plain{padding:0 0 0 30px}
 .b-warn{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--r-md);background:var(--warn-soft);color:var(--ink);font-weight:600;font-size:15.5px}
 .b-warn.c{justify-content:center;text-align:center}
-.b-warn.nb{background:none}
-.b-warn svg{flex:none;width:20px;height:20px;color:var(--warn);margin-top:1px}
+.b-warn.nb{background:none;padding:0;font-size:clamp(18px,1.8vw,21px);font-weight:700;line-height:1.45;letter-spacing:-.01em;align-items:center}
+/* 위험 아이콘: 강조 불릿과 같은 다이아몬드(빨강) + "!" — 같은 모양 테두리가 퍼지며 사라짐 */
+.wico{position:relative;isolation:isolate;flex:none;width:24px;height:24px;display:grid;place-items:center;font-family:var(--f-num);font-size:13px;font-weight:900;line-height:1;color:#fff}
+.b-warn:not(.nb) .wico{width:20px;height:20px;margin-top:1px}
+.b-warn.nb{gap:18px}   /* 퍼지는 테두리가 글자와 겹치지 않게 */
+.wico::before,.wico::after{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:3px;transform:rotate(45deg);z-index:-1}
+.wico::before{background:var(--warn);box-shadow:0 0 8px color-mix(in srgb,var(--warn) 45%,transparent)}
+.wico::after{box-sizing:border-box;border:1.5px solid var(--warn);opacity:0;animation:warnRing 2s cubic-bezier(.2,.6,.35,1) infinite}
+@keyframes warnRing{0%{transform:rotate(45deg) scale(1);opacity:.9}70%{opacity:.15}100%{transform:rotate(45deg) scale(2.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .wico::after{animation:none} }
 .b-callout{padding:14px 16px;border-radius:var(--r-md);background:var(--sunken);font-size:15px;line-height:1.6}
 .b-callout b{font-family:var(--f-num);color:var(--accent);margin-right:6px}
 .b-sub h3{font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:8px}
@@ -287,9 +300,16 @@ img{max-width:100%}
 .ul li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
 .ul.muted li{font-size:14.5px;color:var(--ink-2)}
 .ul.muted li::before{background:var(--ink-3);width:5px;height:5px;left:3px;top:.7em}
-.ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:o}
-.ol li{counter-increment:o;display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);font-size:16px;font-weight:500}
-.ol li::before{content:counter(o);font-family:var(--f-num);font-weight:700;font-size:20px;color:var(--accent);min-width:18px}
+.ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:56px;counter-reset:o;margin-block:6px}
+/* 26p 등: 흰 박스 없이 번호 배지를 세로선으로 잇는 단계형 */
+.ol li{position:relative;counter-increment:o;display:flex;gap:16px;align-items:center;min-height:40px;font-size:17px;font-weight:600}
+.ol li::before{content:counter(o);position:relative;z-index:1;flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-num);font-weight:800;font-size:17px;background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 4px var(--bg),0 6px 16px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+.ol li:not(:last-child)::after{content:"";position:absolute;left:25px;top:50%;width:2px;height:calc(100% + 56px);background:color-mix(in srgb,var(--accent) 40%,transparent)}
+/* 1번만 크게 (16p 1위와 같은 강조) */
+.ol li:not(:first-child){padding-left:6px}
+.ol li:first-child{min-height:52px;font-size:clamp(20px,2.2vw,25px);font-weight:800;color:var(--accent-ink)}
+.ol li:first-child::before{width:52px;height:52px;font-size:22px;background:var(--burst);color:#1B1300;box-shadow:0 0 0 4px var(--bg),0 6px 18px -6px color-mix(in srgb,var(--burst) 95%,transparent)}
+.ol li:first-child::after{background:linear-gradient(var(--burst),color-mix(in srgb,var(--accent) 40%,transparent))}
 .checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .checks li{display:flex;gap:12px;align-items:flex-start;padding:13px 16px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);font-size:15.5px}
 .checks svg{flex:none;width:20px;height:20px;color:var(--ok);margin-top:2px}
@@ -308,13 +328,17 @@ img{max-width:100%}
 .flow{display:flex;flex-direction:column;gap:10px}
 .flow h3{font-size:14px;font-weight:600;color:var(--ink-2)}
 .flow-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;counter-reset:f}
-.fstep{position:relative;min-width:0;min-height:112px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:14px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);overflow:hidden}
-.fstep:not(:last-child)::after{content:"";position:absolute;right:-1px;top:50%;width:10px;height:10px;border-top:1.5px solid var(--line);border-right:1.5px solid var(--line);transform:translate(50%,-50%) rotate(45deg);background:var(--bg);z-index:2}
-.fstep .num{font-size:24px;font-weight:700;color:var(--accent);line-height:1}
-.fstep-l{font-size:15px;font-weight:600;line-height:1.35;position:relative;z-index:1}
-.fstep img{position:absolute;right:-10px;bottom:-10px;width:72px;height:72px;object-fit:contain;opacity:.9}
-.fstep.last{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.fstep.last .num{color:var(--on-accent);opacity:.8}
+/* 흰 박스 없이 원형 번호를 가로선으로 잇는 단계형 (7·15·27·34p) — 마지막 단계(목표)는 노란 배지 */
+.fstep{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:0 4px}
+.fstep .num{position:relative;z-index:1;flex:none;width:44px;height:44px;margin:4px 0;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:800;line-height:1;background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 4px var(--bg),0 6px 16px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+.fstep:not(:last-child)::after{content:"";position:absolute;top:25px;left:50%;width:calc(100% + 8px);height:2px;background:color-mix(in srgb,var(--accent) 40%,transparent)}
+.fstep:nth-last-child(2)::after{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 40%,transparent),var(--burst))}
+.fstep-l{font-size:15px;font-weight:600;line-height:1.35;color:var(--ink)}
+.flow-row{padding:20px 12px 18px;border-radius:var(--r-md);border:1px solid var(--line)}
+.flow-row.has-img{padding-top:76px}   /* 이미지는 원형 숫자 위쪽에 */
+.fstep img{position:absolute;left:50%;top:-62px;transform:translateX(-50%);width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
+.fstep.last .num{width:52px;height:52px;margin:0;font-size:22px;background:var(--burst);color:#1B1300;box-shadow:0 0 0 4px var(--bg),0 6px 18px -6px color-mix(in srgb,var(--burst) 95%,transparent)}
+.fstep.last .fstep-l{font-size:17px;font-weight:800;color:var(--accent-ink)}
 
 /* 스탯 */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
@@ -322,7 +346,13 @@ img{max-width:100%}
 .stat .num{font-size:clamp(30px,3.6vw,42px);font-weight:700;color:var(--accent);line-height:1}
 .stat span{font-size:13.5px;color:var(--ink-2)}
 .stat img{position:absolute;right:8px;top:8px;width:56px;height:56px;object-fit:contain}
-.routine{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px}   /* 태그 2개짜리(일일퀘스트) 칸을 넓게 */
+.routine{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px}
+.routine.r3{display:flex}   /* 8p: 세 박스 한 줄, 내용 길이에 비례한 폭 */
+.routine.r3{gap:8px}
+.routine.r3 .rt{flex:1 1 auto;padding:16px 14px}
+.routine.r3 .rt b{font-size:17px;white-space:nowrap}
+.routine.r3 .rt-sub{padding:6px 7px;font-size:12.5px;gap:5px}
+@media (max-width:560px){ .routine.r3{display:grid;grid-template-columns:1fr} .routine.r3 .rt{padding:18px} }   /* 태그 2개짜리(일일퀘스트) 칸을 넓게 */
 .rt-desc{margin-top:6px;font-size:14.5px;font-weight:600;line-height:1.5;color:var(--ink-2)}
 .rt{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);min-width:0}
 .rt-k{font-size:12px;font-weight:600;color:var(--ink-3)}
@@ -347,18 +377,18 @@ img{max-width:100%}
 .ccard-desc{font-size:13px;color:var(--ink-2);line-height:1.45}
 .badge-best{position:absolute;left:8px;top:8px;font-size:11.5px;font-weight:700;background:var(--burst);color:#1B1300;padding:2px 7px;border-radius:5px}
 
-.portrait{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center;padding:12px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
-.portrait-img{border-radius:var(--r-sm);overflow:hidden;background:var(--sunken)}
+.portrait{display:grid;grid-template-columns:150px minmax(0,1fr);gap:22px;align-items:center}
+.portrait-img{border-radius:var(--r-md);overflow:hidden;background:var(--sunken);box-shadow:0 10px 28px -12px rgba(0,0,0,.35),0 0 0 1px color-mix(in srgb,var(--ink) 8%,transparent)}
 .portrait-img img{width:100%;height:auto;display:block}
-.portrait b{display:block;font-size:16px}
-.portrait em{font-style:normal;color:var(--accent-ink);font-weight:600;font-size:14px}
-.portrait p{margin-top:8px;font-size:15px;color:var(--ink-2)}
+.portrait b{display:block;font-size:13px;font-weight:600;color:var(--ink-3);letter-spacing:.02em}
+.portrait em{display:block;margin-top:2px;font-style:normal;color:var(--accent-ink);font-weight:800;font-size:clamp(22px,2.2vw,26px);line-height:1.25;letter-spacing:-.01em}
+.portrait p{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)}
 .lobby{margin:0;display:flex;flex-direction:column;gap:12px;align-items:stretch;width:100%}
 .lobby-img{position:relative;align-self:center;max-width:100%;border-radius:22px;overflow:hidden;background:var(--sunken);box-shadow:var(--shadow);border:1px solid var(--line)}
 .lobby-img img{display:block;width:auto;height:auto;max-width:100%;max-height:max(160px,calc(100vh - 340px))}
 @media (max-width:900px){ .lobby-img img{max-height:max(120px,calc(100vh - 560px))} .lobby-img{align-self:center} }   /* 질문 아래로 쌓일 때는 가운데 */
 .lobby-cap{margin-top:4px}
-.b-emph.plain-c{background:none;border:0;padding:0;text-align:center}
+.b-emph.plain-c{width:fit-content;max-width:100%;margin-inline:auto;padding:0 0 0 30px;text-align:center}
 .lobby-note{text-align:center}
 
 .icons{display:flex;gap:10px;flex-wrap:wrap}
@@ -395,6 +425,19 @@ img{max-width:100%}
 .rank.big .rtext{font-size:16px}
 .icons.big .ibox img{width:64px;height:64px;border-radius:9px}
 .rank.big .rsfx{font-size:14.5px;font-weight:600;color:var(--ink)}
+/* 30·41p: 흰 박스 없이 — 순위 배지를 세로선으로 잇는 타임라인형 */
+/* 배지 사이 세로선: 줄 높이가 같으므로 다음 줄 배지 중심까지 (100% + gap) */
+.rank.big .rrow:not(:last-child)::before{content:"";position:absolute;left:21px;top:50%;width:2px;height:calc(100% + 10px);background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.rank.big .rrow:first-child::before{background:linear-gradient(var(--burst),color-mix(in srgb,var(--accent) 45%,transparent))}
+.rank.big.fit .rrow:not(:last-child)::before{height:calc(100% + 8px)}
+.rank.big .rrow{position:relative;background:none;border:0;padding:4px 0 4px 0;gap:18px}
+.rank.big .rrow > .num{position:relative;z-index:1;flex:none;width:44px;min-width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:800;background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 4px var(--bg),0 6px 16px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+.rank.big .rrow:first-child > .num{background:var(--burst);color:#1B1300;box-shadow:0 0 0 4px var(--bg),0 6px 16px -6px color-mix(in srgb,var(--burst) 90%,transparent)}
+.rank.big .ibox{background:none;border:0;padding:0;gap:6px;font-size:13.5px}
+.rank.big .ibox img{background:var(--sunken);box-shadow:0 8px 20px -10px rgba(0,0,0,.45),0 0 0 1px color-mix(in srgb,var(--ink) 8%,transparent);transition:box-shadow .15s}
+.rank.big .ibox.has-tip:hover img,.rank.big .ibox.has-tip:focus-visible img{box-shadow:0 8px 20px -10px rgba(0,0,0,.45),0 0 0 2px var(--accent)}
+.rank.big .rboxes{gap:14px}
+.rank.big .rtext{font-size:17px;font-weight:700}
 /* 41p: 화면 높이에 맞춰 얼굴 크기를 줄여 스크롤 없이 */
 .rank.big.fit .ibox img{width:min(112px,20vw,max(72px,9.4vh));height:min(112px,20vw,max(72px,9.4vh))}
 .rank.big.fit{gap:8px} .rank.big.fit .rrow{padding-block:8px}
@@ -418,11 +461,15 @@ img{max-width:100%}
 .cmp-b b{margin-top:10px}
 
 /* 옵션 순위 */
-.opts{display:flex;flex-direction:column;gap:8px}
-.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line);font-size:16px;font-weight:600}
-.opt:first-child{padding:22px 18px;font-size:clamp(20px,2.4vw,26px);border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
-.opt .num{color:var(--ink-3);font-size:14px;width:20px}
-.opt:first-child .num{color:var(--accent)}
+.opts{display:flex;flex-direction:column;gap:56px;margin-block:6px 14px}
+/* 16p: 흰 박스 없이 순위 배지 + 세로선, 1위만 크게 */
+.opt{position:relative;display:flex;align-items:center;gap:16px;min-height:40px;font-size:17px;font-weight:600;color:var(--ink)}
+.opt:not(:last-child)::before{content:"";position:absolute;left:25px;top:50%;width:2px;height:calc(100% + 56px);background:color-mix(in srgb,var(--accent) 40%,transparent)}
+.opt .num{position:relative;z-index:1;flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 4px var(--bg),0 6px 16px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+.opt:first-child{min-height:52px;font-size:clamp(22px,2.4vw,28px);font-weight:800;color:var(--accent-ink)}
+.opt:first-child::before{background:linear-gradient(var(--burst),color-mix(in srgb,var(--accent) 40%,transparent))}
+.opt:first-child .num{width:52px;height:52px;font-size:22px;background:var(--burst);color:#1B1300;box-shadow:0 0 0 4px var(--bg),0 6px 18px -6px color-mix(in srgb,var(--burst) 95%,transparent)}
+.opt:not(:first-child){padding-left:6px}
 
 /* R → SR */
 .rsr{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
@@ -619,6 +666,31 @@ img{max-width:100%}
 .pip{position:relative;height:34px;border-radius:7px;background:var(--sunken);display:grid;place-items:center;font-family:var(--f-num);font-weight:600;font-size:13px;color:var(--ink-3)}
 .pip.f{background:var(--accent-soft);color:var(--accent-ink)}
 .pip.stop{background:var(--accent);color:var(--on-accent)}
+.smat-t{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.smat-t th,.smat-t td{padding:6px 5px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.smat-t thead th{font-size:11.5px;font-weight:600;color:var(--ink-3)}
+.smat-t thead tr:first-child th:not(:first-child){font-size:12px;color:var(--ink);font-weight:700;text-align:center;border-bottom:1.5px solid var(--line)}
+.smat-t th.g{border-left:1px solid var(--line)}
+.smat-t td.g{border-left:1px solid var(--line)}
+.smat-ic{position:relative;display:inline-block;vertical-align:middle;cursor:help;border-radius:5px;outline:none}
+.smat-ic:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.smat-ic:hover .ibox-tip,.smat-ic:focus .ibox-tip{opacity:1;visibility:visible}
+.smat-ic .ibox-tip{font-size:12px;text-align:left}
+.smat-ic.r .ibox-tip{left:auto;right:-8px;transform:none}
+.smat-t th img{width:24px;height:24px;object-fit:contain;vertical-align:middle;border-radius:4px}
+.smat-t td.z{color:color-mix(in srgb,var(--ink-3) 45%,transparent)}
+.smat-t td.new{color:var(--warn);font-weight:700}
+.smat-t tr.need td{background:color-mix(in srgb,var(--warn) 4%,transparent)}
+.smat-t tr.blk td{padding:6px 10px;background:color-mix(in srgb,var(--warn) 11%,transparent);color:var(--warn);font-size:12.5px;font-weight:600;text-align:left;white-space:normal;border-bottom:none}
+.smat-t tr.blk td > span{display:flex;align-items:center;gap:6px}
+.smat-t tr.blk svg{flex:none;width:14px;height:14px}
+.smat-t tr.tot td{font-weight:700;color:var(--ink);border-top:1.5px solid var(--ink-3);border-bottom:none}
+.smat-pc,.smat-m{padding:6px 12px 4px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface)}
+.smat-note{margin-top:8px;font-size:11.5px;color:var(--ink-3)}
+.smat-m{display:none}
+.smat-m h5{margin:10px 0 2px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.smat-m h5:first-child{margin-top:0}
+@media (max-width:560px){ .smat-pc{display:none} .smat-m{display:block;padding:8px 8px 4px} .smat-t{font-size:12.5px} .smat-t th,.smat-t td{padding:5px 4px} }
 .pip.stop::before{content:"막힘";position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-family:var(--f-body);font-size:11.5px;font-weight:600;color:var(--warn);white-space:nowrap}
 
 /* 오버로드 시뮬 */
@@ -748,7 +820,9 @@ img{max-width:100%}
 
 /* 소장품 관리 시뮬레이터 */
 .col-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.col-name{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:2;font-size:12.5px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:8px;padding:4px 10px;pointer-events:none}
 .col-notice{position:absolute;bottom:10px;right:12px;font-size:12px;font-weight:600;color:var(--ink-2);display:flex;align-items:baseline;gap:6px;background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:8px;padding:4px 10px}
+@media (max-width:560px){ .col-notice{bottom:auto;top:10px} }   /* 모바일: 하단 중앙 소장품 이름과 겹치지 않게 위로 */
 .col-notice b{font-size:18px;color:var(--accent);font-family:var(--f-num)}
 .col-stage{position:relative;height:clamp(110px,calc(100vh - 730px),150px);border-radius:var(--r-md);background:radial-gradient(ellipse at 50% 92%,color-mix(in srgb,var(--accent) 16%,transparent) 0 22%,transparent 23%),var(--sunken);display:grid;place-items:center;overflow:hidden;user-select:none;-webkit-user-select:none}
 .col-stage img{position:absolute;top:7px;bottom:7px;left:0;right:0;margin:auto;height:calc(100% - 14px);width:auto;max-width:70%;object-fit:contain;transition:transform .3s var(--ease);pointer-events:none}
@@ -975,14 +1049,20 @@ kbd{font-family:var(--f-num);font-size:12px;border:1px solid var(--line);border-
   .gear{grid-template-columns:repeat(2,minmax(0,1fr));max-width:340px}
   .gear .gcard:nth-child(1){order:1} .gear .gcard:nth-child(2){order:3} .gear .gcard:nth-child(3){order:2} .gear .gcard:nth-child(4){order:4}   /* 2x2: 머리/몸통 · 팔/다리 (한 줄일 땐 머리/팔/몸통/다리) */
   .flow-row{grid-auto-flow:row;grid-auto-columns:auto}
-  .fstep{min-height:0;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px}
-  .fstep:not(:last-child)::after{right:50%;top:auto;bottom:-1px;transform:translate(50%,50%) rotate(135deg)}
-  .fstep img{position:static;width:40px;height:40px;margin-left:auto}
+  .flow-row{grid-auto-flow:row;gap:48px;padding:18px 14px}
+  .flow-row.has-img{padding-top:18px}
+  .fstep{flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;text-align:left;padding:0}
+  .fstep .num{margin:0 4px}
+  .fstep.last .num{margin:0}
+  .fstep:not(:last-child)::after{top:50%;left:25px;width:2px;height:calc(100% + 48px)}
+  .fstep:nth-last-child(2)::after{background:linear-gradient(color-mix(in srgb,var(--accent) 40%,transparent),var(--burst))}
+  .fstep img{position:static;transform:none;width:40px;height:40px;margin-left:-4px}   /* 세로형: 텍스트 바로 오른쪽 */
   .tip{grid-template-columns:1fr;gap:2px}
   .daily{grid-template-columns:1fr}
   .routine{grid-template-columns:1fr}
-  .rank.big .rrow{gap:10px;padding:10px 12px;flex-wrap:nowrap}
-  .rank.big .rrow > .num{width:22px;font-size:26px}
+  .rank.big .rrow{gap:12px;padding:6px 0;flex-wrap:nowrap}
+  .rank.big .rrow > .num{width:38px;min-width:38px;height:38px;font-size:17px}
+  .rank.big .rrow:not(:last-child)::before{left:18px}
   .sq-slots{gap:5px}
   .sq-card,.sq-hole{width:50px;height:50px}
   .w-status.sq-status{min-height:136px}
@@ -1014,7 +1094,7 @@ kbd{font-family:var(--f-num);font-size:12px;border:1px solid var(--line);border-
   *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0ms !important;transition-duration:.01ms !important}
 }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"니케 뉴비 FAQ","alternateName":"승리의 여신: 니케 뉴비 FAQ","url":"https://nikke-faq.github.io/","inLanguage":"ko-KR"},{"@type":"FAQPage","name":"승리의 여신: 니케 · 뉴비가 자주 하는 질문","url":"https://nikke-faq.github.io/","inLanguage":"ko-KR","about":{"@type":"VideoGame","name":"승리의 여신: 니케","alternateName":"GODDESS OF VICTORY: NIKKE"},"mainEntity":[{"@type":"Question","name":"시작 전에 알아야 할 것","acceptedAnswer":{"@type":"Answer","text":"니케는 방치형 게임입니다."}},{"@type":"Question","name":"리세해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"리세를 권장합니다."}},{"@type":"Question","name":"무과금도 할만한가요?","acceptedAnswer":{"@type":"Answer","text":"할 만합니다."}},{"@type":"Question","name":"지금 시작해도 될까요?","acceptedAnswer":{"@type":"Answer","text":"빨리 시작할수록 유리합니다."}},{"@type":"Question","name":"서버는 어디가 좋나요?","acceptedAnswer":{"@type":"Answer","text":"글로벌 원빌드라 서버 간 콘텐츠 차이는 없습니다."}},{"@type":"Question","name":"앱플레이어를 써도 되나요?","acceptedAnswer":{"@type":"Answer","text":"앱플레이어는 사용하지 마세요."}},{"@type":"Question","name":"뭐부터 해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"일일퀘스트·이벤트부터 확인하고, 노말·하드는 막히기 전까지 미세요."}},{"@type":"Question","name":"매일 챙겨야 할 것","acceptedAnswer":{"@type":"Answer","text":"일일퀘스트(시뮬레이션룸·요격전)·이벤트(입장권 5장 소진)"}},{"@type":"Question","name":"버스트 단계별 역할이 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"1·2버스트는 버퍼, 3버스트는 딜러 포지션입니다."}},{"@type":"Question","name":"오토 스킬, 순서가 왜 중요할까요?","acceptedAnswer":{"@type":"Answer","text":"오토 사용 시 왼쪽 → 오른쪽 순서로 발동됩니다."}},{"@type":"Question","name":"덱은 어떻게 짜나요?","acceptedAnswer":{"@type":"Answer","text":"1233+@ — 버스트 1·2·3단계 편성 공식"}},{"@type":"Question","name":"이 멤버 그대로 키워도 되나요?","acceptedAnswer":{"@type":"Answer","text":"다섯 캐릭만 균등하게 키우세요."}},{"@type":"Question","name":"뭐부터 키워야 하나요?","acceptedAnswer":{"@type":"Answer","text":"돌파와 무관하게 성능 좋은 니케를 우선하세요."}},{"@type":"Question","name":"장비 강화해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"9티어 미만은 강화 불필요"}},{"@type":"Question","name":"오버로드란?","acceptedAnswer":{"@type":"Answer","text":"니케의 최종 장비입니다."}},{"@type":"Question","name":"오버로드 효과, 뭐가 좋나요?","acceptedAnswer":{"@type":"Answer","text":"우월코드 데미지 증가"}},{"@type":"Question","name":"오버로드 효과, 어떻게 정해지나요?","acceptedAnswer":{"@type":"Answer","text":"추가효과 3줄이 등장하며, 줄마다 등장 확률이 다릅니다."}},{"@type":"Question","name":"오버로드 장비, 어디까지 강화하나요?","acceptedAnswer":{"@type":"Answer","text":"머리 4 · 팔 3 · 몸통 1 · 다리 0"}},{"@type":"Question","name":"상자, 언제 까야 하나요?","acceptedAnswer":{"@type":"Answer","text":"다섯 캐릭 모두 1업씩 가능할 정도면 열어도 됩니다."}},{"@type":"Question","name":"코어더스트 상자, 이렇게 관리하세요","acceptedAnswer":{"@type":"Answer","text":"노말·하드 스테이지를 막힐때까지 최대한 밀고 필요한 만큼만 사용하세요."}},{"@type":"Question","name":"유실물 주워야 하나요?","acceptedAnswer":{"@type":"Answer","text":"종합 체육관 건설을 위해 최소 10챕터까지는 주워야 합니다."}},{"@type":"Question","name":"싱크로 칸, 늘려야 하나요?","acceptedAnswer":{"@type":"Answer","text":"필요하다면 쥬얼로 확장하세요."}},{"@type":"Question","name":"스테이지가 막혔어요","acceptedAnswer":{"@type":"Answer","text":"자연스러운 현상입니다 — 전투력 패널티가 존재합니다."}},{"@type":"Question","name":"그럼 뭘 시도해볼 수 있을까요?","acceptedAnswer":{"@type":"Answer","text":"버스트 순서·타이밍·우월코드 니케를 바꿔보세요."}},{"@type":"Question","name":"EX스테이지, 꼭 깨야 하나요?","acceptedAnswer":{"@type":"Answer","text":"쥬얼 광산으로 아껴서 진행하세요."}},{"@type":"Question","name":"문(막힌 곳), 어떻게 여나요?","acceptedAnswer":{"@type":"Answer","text":"하얀색 원형 발판을 찾아 밟으세요."}},{"@type":"Question","name":"160레벨에 막혔어요","acceptedAnswer":{"@type":"Answer","text":"3돌파 5캐릭터가 필요합니다."}},{"@type":"Question","name":"바디라벨상점에서 뭘 사나요?","acceptedAnswer":{"@type":"Answer","text":"160레벨 돌파 이전이라면 하이 퀄리티 액세스 풀매수가 우선입니다."}},{"@type":"Question","name":"실버 마일리지 · 스페어바디 선택 상자, 뭘 바꾸나요?","acceptedAnswer":{"@type":"Answer","text":"둘 다 160레벨까지 아끼고, 그때 상황 보고 결정하세요."}},{"@type":"Question","name":"일반모집 보너스 보상, 뭘 받나요?","acceptedAnswer":{"@type":"Answer","text":"160레벨까지 아끼고, 상황에 따라 우선순위가 달라집니다."}},{"@type":"Question","name":"이벤트, 뭐부터 하나요?","acceptedAnswer":{"@type":"Answer","text":"입장권(5장) 매일 소진 — 누적 안 됨"}},{"@type":"Question","name":"이벤트 상점, 놓치면 안 되는 것","acceptedAnswer":{"@type":"Answer","text":"이벤트 하드 오픈 시 입장권부터 사세요."}},{"@type":"Question","name":"특요? 특특요? 뭘 돌리나요?","acceptedAnswer":{"@type":"Answer","text":"이상개체요격전을 우선하세요."}},{"@type":"Question","name":"스토리 보는 순서 있나요?","acceptedAnswer":{"@type":"Answer","text":"스토리 라인 → RELEASE"}},{"@type":"Question","name":"유니온, 가입해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"유니온 레이드 전에 가입하세요."}},{"@type":"Question","name":"갱생관, 뭐부터 하나요?","acceptedAnswer":{"@type":"Answer","text":"해방(아무거나) 1명, 그다음 니힐리스타 탐색."}},{"@type":"Question","name":"협동작전, 해도 되나요?","acceptedAnswer":{"@type":"Answer","text":"9단계까지는 쉬우니 일반모드로 부담 없이."}},{"@type":"Question","name":"쥬얼은 언제 사용하나요?","acceptedAnswer":{"@type":"Answer","text":"2% 픽업 모집에 사용하세요."}},{"@type":"Question","name":"3돌 할까요?","acceptedAnswer":{"@type":"Answer","text":"니케는 명함으로도 충분합니다. 명함부터 확보하세요."}},{"@type":"Question","name":"위시리스트 어떻게 구성하나요?","acceptedAnswer":{"@type":"Answer","text":"참고 자료이지, 정답이 아닙니다."}},{"@type":"Question","name":"소장품/애장품, 누구부터 주나요?","acceptedAnswer":{"@type":"Answer","text":"R등급 소장품으로 주력 1군 우선."}},{"@type":"Question","name":"소장품, 이렇게 키우세요","acceptedAnswer":{"@type":"Answer","text":"R등급 15단계 후 SR 교체가 가장 효율적입니다."}},{"@type":"Question","name":"소장품 관리, 직접 해볼까요?","acceptedAnswer":{"@type":"Answer","text":"관리 키트로 경험치를 채우고, 대성공으로 단계를 건너뛰세요."}},{"@type":"Question","name":"추가 팁 모음","acceptedAnswer":{"@type":"Answer","text":"놓치기 쉬운 재화·혜택을 한 번에 챙겨보세요."}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"니케 뉴비 FAQ","alternateName":"승리의 여신: 니케 뉴비 FAQ","url":"https://nikke-faq.github.io/","inLanguage":"ko-KR"},{"@type":"FAQPage","name":"승리의 여신: 니케 · 뉴비가 자주 하는 질문","url":"https://nikke-faq.github.io/","inLanguage":"ko-KR","about":{"@type":"VideoGame","name":"승리의 여신: 니케","alternateName":"GODDESS OF VICTORY: NIKKE"},"mainEntity":[{"@type":"Question","name":"시작 전에 알아야 할 것","acceptedAnswer":{"@type":"Answer","text":"니케는 방치형 게임입니다."}},{"@type":"Question","name":"리세해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"리세를 권장합니다."}},{"@type":"Question","name":"무과금도 할만한가요?","acceptedAnswer":{"@type":"Answer","text":"할 만합니다."}},{"@type":"Question","name":"지금 시작해도 될까요?","acceptedAnswer":{"@type":"Answer","text":"빨리 시작할수록 유리합니다."}},{"@type":"Question","name":"서버는 어디가 좋나요?","acceptedAnswer":{"@type":"Answer","text":"글로벌 원빌드라 서버 간 콘텐츠 차이는 없습니다."}},{"@type":"Question","name":"앱플레이어를 써도 되나요?","acceptedAnswer":{"@type":"Answer","text":"앱플레이어는 사용하지 마세요."}},{"@type":"Question","name":"뭐부터 해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"일일퀘스트·이벤트부터 확인하고, 노말·하드는 막히기 전까지 미세요."}},{"@type":"Question","name":"매일 챙겨야 할 것","acceptedAnswer":{"@type":"Answer","text":"전초기지 보상 1회·일일퀘스트(시뮬레이션룸·요격전)·이벤트(입장권 5장 소진)"}},{"@type":"Question","name":"버스트 단계별 역할이 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"1·2버스트는 버퍼, 3버스트는 딜러 포지션입니다."}},{"@type":"Question","name":"오토 스킬, 순서가 왜 중요할까요?","acceptedAnswer":{"@type":"Answer","text":"오토 사용 시 왼쪽 → 오른쪽 순서로 발동됩니다."}},{"@type":"Question","name":"덱은 어떻게 짜나요?","acceptedAnswer":{"@type":"Answer","text":"1233+@ — 버스트 1·2·3단계 편성 공식"}},{"@type":"Question","name":"이 멤버 그대로 키워도 되나요?","acceptedAnswer":{"@type":"Answer","text":"다섯 캐릭만 균등하게 키우세요."}},{"@type":"Question","name":"뭐부터 키워야 하나요?","acceptedAnswer":{"@type":"Answer","text":"돌파와 무관하게 성능 좋은 니케를 우선하세요."}},{"@type":"Question","name":"장비 강화해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"9티어 미만은 강화 불필요"}},{"@type":"Question","name":"오버로드란?","acceptedAnswer":{"@type":"Answer","text":"니케의 최종 장비입니다."}},{"@type":"Question","name":"오버로드 효과, 뭐가 좋나요?","acceptedAnswer":{"@type":"Answer","text":"우월코드 데미지 증가"}},{"@type":"Question","name":"오버로드 효과, 어떻게 정해지나요?","acceptedAnswer":{"@type":"Answer","text":"추가효과 3줄이 등장하며, 줄마다 등장 확률이 다릅니다."}},{"@type":"Question","name":"오버로드 장비, 어디까지 강화하나요?","acceptedAnswer":{"@type":"Answer","text":"머리 4 · 팔 3 · 몸통 1 · 다리 0"}},{"@type":"Question","name":"상자, 언제 까야 하나요?","acceptedAnswer":{"@type":"Answer","text":"다섯 캐릭 모두 1업씩 가능할 정도면 열어도 됩니다."}},{"@type":"Question","name":"코어더스트 상자, 이렇게 관리하세요","acceptedAnswer":{"@type":"Answer","text":"노말·하드 스테이지를 막힐때까지 최대한 밀고 필요한 만큼만 사용하세요."}},{"@type":"Question","name":"유실물 주워야 하나요?","acceptedAnswer":{"@type":"Answer","text":"종합 체육관 건설을 위해 최소 10챕터까지는 주워야 합니다."}},{"@type":"Question","name":"싱크로 칸, 늘려야 하나요?","acceptedAnswer":{"@type":"Answer","text":"필요하다면 쥬얼로 확장하세요."}},{"@type":"Question","name":"스테이지가 막혔어요","acceptedAnswer":{"@type":"Answer","text":"자연스러운 현상입니다 — 전투력 패널티가 존재합니다."}},{"@type":"Question","name":"그럼 뭘 시도해볼 수 있을까요?","acceptedAnswer":{"@type":"Answer","text":"버스트 순서·타이밍·우월코드 니케를 바꿔보세요."}},{"@type":"Question","name":"EX스테이지, 꼭 깨야 하나요?","acceptedAnswer":{"@type":"Answer","text":"쥬얼 광산으로 아껴서 진행하세요."}},{"@type":"Question","name":"문(막힌 곳), 어떻게 여나요?","acceptedAnswer":{"@type":"Answer","text":"하얀색 원형 발판을 찾아 밟으세요."}},{"@type":"Question","name":"160레벨에 막혔어요","acceptedAnswer":{"@type":"Answer","text":"3돌파 5캐릭터가 필요합니다."}},{"@type":"Question","name":"바디라벨상점에서 뭘 사나요?","acceptedAnswer":{"@type":"Answer","text":"160레벨 돌파 이전이라면 하이 퀄리티 액세스 풀매수가 우선입니다."}},{"@type":"Question","name":"실버 마일리지 · 스페어바디 선택 상자, 뭘 바꾸나요?","acceptedAnswer":{"@type":"Answer","text":"둘 다 160레벨까지 아끼고, 그때 상황 보고 결정하세요."}},{"@type":"Question","name":"일반모집 보너스 보상, 뭘 받나요?","acceptedAnswer":{"@type":"Answer","text":"160레벨까지 아끼고, 상황에 따라 우선순위가 달라집니다."}},{"@type":"Question","name":"이벤트, 뭐부터 하나요?","acceptedAnswer":{"@type":"Answer","text":"입장권(5장) 매일 소진 — 누적 안 됨"}},{"@type":"Question","name":"이벤트 상점, 놓치면 안 되는 것","acceptedAnswer":{"@type":"Answer","text":"이벤트 하드 오픈 시 입장권부터 사세요."}},{"@type":"Question","name":"특요? 특특요? 뭘 돌리나요?","acceptedAnswer":{"@type":"Answer","text":"이상개체요격전을 우선하세요."}},{"@type":"Question","name":"스토리 보는 순서 있나요?","acceptedAnswer":{"@type":"Answer","text":"스토리 라인 → RELEASE"}},{"@type":"Question","name":"유니온, 가입해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"유니온 레이드 전에 가입하세요."}},{"@type":"Question","name":"갱생관, 뭐부터 하나요?","acceptedAnswer":{"@type":"Answer","text":"해방(아무거나) 1명, 그다음 니힐리스타 탐색."}},{"@type":"Question","name":"협동작전, 해도 되나요?","acceptedAnswer":{"@type":"Answer","text":"9단계까지는 쉬우니 일반모드로 부담 없이."}},{"@type":"Question","name":"쥬얼은 언제 사용하나요?","acceptedAnswer":{"@type":"Answer","text":"2% 픽업 모집에 사용하세요."}},{"@type":"Question","name":"3돌 할까요?","acceptedAnswer":{"@type":"Answer","text":"니케는 명함으로도 충분합니다. 명함부터 확보하세요."}},{"@type":"Question","name":"위시리스트 어떻게 구성하나요?","acceptedAnswer":{"@type":"Answer","text":"참고 자료이지, 정답이 아닙니다."}},{"@type":"Question","name":"소장품/애장품, 누구부터 주나요?","acceptedAnswer":{"@type":"Answer","text":"R등급 소장품으로 주력 1군 우선."}},{"@type":"Question","name":"소장품, 이렇게 키우세요","acceptedAnswer":{"@type":"Answer","text":"R등급 15단계 후 SR 교체가 가장 효율적입니다."}},{"@type":"Question","name":"소장품 관리, 직접 해볼까요?","acceptedAnswer":{"@type":"Answer","text":"관리 키트로 경험치를 채우고, 대성공으로 단계를 건너뛰세요."}},{"@type":"Question","name":"추가 팁 모음","acceptedAnswer":{"@type":"Answer","text":"놓치기 쉬운 재화·혜택을 한 번에 챙겨보세요."}}]}]}</script>
 </head>
 <body>
 
@@ -1168,10 +1248,11 @@ var Q = [
 {c:1, q:"리세해야 하나요?", a:"리세를 권장합니다.", b:[
   {t:"portrait", img:C("크라운"), name:"크라운", tag:"= 출생신고서", x:"크라운은 이 게임의 \"출생신고서\"입니다."},
   {t:"emph", x:"스토리만 볼 계획이라면 리세 없이 시작해도 됩니다."},
+  {t:"emph", x:"리세하다가 접을 것 같으면 그냥 시작하세요."},
   {t:"ul", muted:1, items:["리세계는 최대한 당일 생성 계정으로 — 오래된 계정은 PVP에서 불리할 수 있음","진행계는 비추천","게스트 계정은 생성 불가"]}]},
 
 {c:1, q:"무과금도 할만한가요?", a:"할 만합니다.", b:[
-  {t:"check", items:["픽업 확률이 높고 명함 효율도 좋은 편","돌파(별) 1개당 성능 차이는 약 2%","돌파에 따른 스킬 성능 제약 없음","막혀도 성장이 완전히 멈추지는 않음","골드 마일리지 티켓(픽업 마일리지)은 무한 이월"]}]},
+  {t:"check", items:["픽업 확률이 높고 명함 효율도 좋은 편","캐릭터를 제외한 전용무기 같은 다른 뽑기는 없음","돌파(별) 1개당 성능 차이는 약 2%","돌파에 따른 스킬 성능 제약 없음","막혀도 성장이 완전히 멈추지는 않음","골드 마일리지 티켓(픽업 마일리지)은 무한 이월"]}]},
 
 {c:1, q:"지금 시작해도 될까요?", a:"빨리 시작할수록 유리합니다.", b:[
   {t:"p", x:"크라운이 있다면 이륙하세요."},
@@ -1195,9 +1276,10 @@ var Q = [
   {t:"note", x:"단, 컴퍼니 암즈 보상(9티어 기업 장비)은 랜덤이고 스토리에 따른 맵에서의 소소한 연출은 포기해야 합니다."},
   {t:"note", x:"스킵한 스토리는 전초기지 → 커맨드센터 → 회상에서 감상이 가능합니다."}]},
 
-{c:2, q:"매일 챙겨야 할 것", a:"일일퀘스트(시뮬레이션룸·요격전)·이벤트(입장권 5장 소진)", b:[
+{c:2, q:"매일 챙겨야 할 것", a:"전초기지 보상 1회·일일퀘스트(시뮬레이션룸·요격전)·이벤트(입장권 5장 소진)", b:[
+  {t:"emph", x:"전초기지 방어 보상 1회 수령(24시간 이내)"},
   {t:"emph", x:"시뮬레이션룸·요격전은 필수 일퀘"},
-  {t:"routine", items:[{l:"일일퀘스트", subs:[["시뮬레이션룸","필수"],["요격전","필수"]]},{l:"이벤트", subs:[["입장권 5장","소진"]]}]},
+  {t:"routine", items:[{l:"전초기지 방어", subs:[["보상 수령","1회"]]},{l:"일일퀘스트", subs:[["시뮬레이션룸","필수"],["요격전","필수"]]},{l:"이벤트", subs:[["입장권 5장","소진"]]}]},
   {t:"note", x:"노말 22지 클리어가 최단기 목표입니다."}]},
 
 {c:2, q:"버스트 단계별 역할이 무엇인가요?", a:"1·2버스트는 버퍼, 3버스트는 딜러 포지션입니다.", b:[
@@ -1242,9 +1324,12 @@ var Q = [
 
 {c:3, q:"뭐부터 키워야 하나요?", a:"돌파와 무관하게 성능 좋은 니케를 우선하세요.", b:[
   {t:"p", x:"레벨업은 공유되니, 스킬 재화 투자와 오버로드 장비에 집중하면 됩니다."},
-  {t:"skill", stops:[4,7]},
   {t:"note", x:"스킬은 4 다음 7에서 막히니 주력 위주로 단계적으로."},
-  {t:"note", x:"이전 솔로 레이드에서 사용된 니케들을 확인해보세요."}]},
+  {t:"note", x:"이전 솔로 레이드에서 사용된 니케들을 확인해보세요."},
+  {t:"skill", mat:{s:[I("skill_manual_I"),I("skill_manual_II"),I("skill_Manual_III")], b:[I("burst_manual_I"),I("burst_manual_II"),I("burst_manual_III")], chip:I("A.N.M.I._code_manual")},
+   // 레벨업 1→2 … 9→10 소모량 (스킬 1개 기준): 매뉴얼 Ⅰ·Ⅱ·Ⅲ (스킬·버스트 같은 수량), 속성칩 스킬 / 버스트
+   up:[[8,0,0,0,0],[10,0,0,0,0],[26,0,0,0,0],[42,60,0,10,20],[126,90,0,15,30],[168,120,0,30,60],[210,150,90,70,140],[231,165,105,100,200],[273,190,120,135,270]],
+   gates:[{at:4, lack:"2단계 스킬칩과 속성칩"}, {at:7, lack:"3단계 스킬칩과 속성칩"}]}]},
 
 {c:3, q:"장비 강화해야 하나요?", a:"9티어 미만은 강화 불필요", b:[
   {t:"emph", x:"9티어 기업 장비만 고려하세요."},
@@ -1276,7 +1361,8 @@ var Q = [
   {t:"emph", x:"서두를 필요가 없습니다."}]},
 
 {c:4, q:"코어더스트 상자, 이렇게 관리하세요", a:"노말·하드 스테이지를 막힐때까지 최대한 밀고 필요한 만큼만 사용하세요.", b:[
-  {t:"note", x:"선택 상자는 코어더스트로(유료 상품 제외).|받을 수 있는 보상은 다 받고, 아낄 수 있을 때 최대한 아끼세요."}]},
+  {t:"p", x:"선택 상자는 코어더스트로(유료 상품 제외)."},
+  {t:"note", x:"받을 수 있는 보상은 다 받고, 아낄 수 있을 때 최대한 아끼세요."}]},
 
 {c:4, q:"유실물 주워야 하나요?", a:"종합 체육관 건설을 위해 최소 10챕터까지는 주워야 합니다.", b:[
   {t:"p", x:"택틱 아카데미 수강을 위한 건물 건설 설계도가 필요합니다."},
@@ -1414,7 +1500,10 @@ var COL_REQ = {R:1000, SR:3000};
 var COL_KIT = [{n:"초급자용 관리 키트", x:200, img:I("management kit beginner")},{n:"중급자용 관리 키트", x:500, img:I("management kit intermediate")},{n:"상급자용 관리 키트", x:1000, img:I("management kit advanced")}];
 var COL_INV = [260, 100, 50];   // 제한 모드 기본 보유량 (추천표대로 진행 시 SR 15 완성 약 75%)
 var OV_INV = {mod:100, key:300};   // 17p 오버로드 기본 보유량 (커스텀 모듈 · 커스텀 락 키)
-var COL_IMG = I("운동 지휘관 인형");   // 소장품 이미지 (단계와 무관하게 고정) → ./images/items/운동 지휘관 인형.webp
+// 소장품: 6종 중 하나가 랜덤으로 등장 (처음으로 누르면 다시 뽑음) → ./images/items/<이름>.webp
+var COL_DOLLS = [{n:"요리 지휘관 인형", t:"AR", img:I("요리 지휘관 인형")},{n:"쇼핑 지휘관 인형", t:"MG", img:I("쇼핑 지휘관 인형")},{n:"운동 지휘관 인형", t:"RL", img:I("운동 지휘관 인형")},
+                 {n:"전투 지휘관 인형", t:"SG", img:I("전투 지휘관 인형")},{n:"커피 지휘관 인형", t:"SMG", img:I("커피 지휘관 인형")},{n:"낮잠 지휘관 인형", t:"SR", img:I("낮잠 지휘관 인형")}];
+function colPickDoll(prev){ var i; do { i = Math.floor(Math.random()*COL_DOLLS.length); } while(COL_DOLLS.length>1 && COL_DOLLS[i]===prev); return COL_DOLLS[i]; }
 
 /* ── 소장품 자동으로 돌려보기: R0 → R15 → SR5 → SR15 (레벨업 시 초과 경험치 초기화) ── */
 var COL_KN = ["초급","중급","상급"];
@@ -1807,7 +1896,7 @@ function block(b){
   case "note": return '<p class="b-note'+(b.accent?" accent":"")+(b.center?" center":"")+'">'+br(b.x)+'</p>';
   case "noteh": return '<div class="note-h"><b>'+esc(b.title)+'</b><p class="b-p">'+br(b.x)+'</p></div>';
   case "emph": return '<p class="b-emph'+(b.plain?" plain":"")+(b.pc?" plain-c":"")+'">'+br(b.x)+'</p>';
-  case "warn": return '<div class="b-warn'+(b.c?" c":"")+(b.nb?" nb":"")+'">'+ICO.warn+'<span>'+br(b.x)+'</span></div>';
+  case "warn": return '<div class="b-warn'+(b.c?" c":"")+(b.nb?" nb":"")+'"><span class="wico" aria-hidden="true">!</span><span>'+br(b.x)+'</span></div>';
   case "callout": return '<div class="b-callout">'+(b.ex?'<b>EX)</b>':'')+br(b.x)+'</div>';
   case "ul": return '<ul class="ul'+(b.muted?" muted":"")+'">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ul>';
   case "ol": return '<ol class="ol">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ol>';
@@ -1815,15 +1904,15 @@ function block(b){
   case "sub": return '<div class="b-sub"><h3>'+esc(b.title)+'</h3><ul class="ul muted">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ul></div>';
   case "link": return '<a class="link-hero'+(b.center?" center":"")+(b.tc?" tc":"")+'" href="'+esc(b.url)+'" target="_blank" rel="noopener">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+ICO.out+'</strong>'+(b.tc?'</span>':'')+'</a>';
   case "routine":
-    return '<div class="routine">'+b.items.map(function(it){
-      return '<div class="rt'+(it.subs?" wide":"")+'"><span class="rt-k">매일</span><b>'+esc(it.l)+'</b>'+
+    return '<div class="routine'+(b.items.length===3?" r3":"")+'">'+b.items.map(function(it){
+      return '<div class="rt'+(it.subs?" wide":"")+(it.full?" full":"")+'"><span class="rt-k">매일</span><b>'+esc(it.l)+'</b>'+
         (it.subs?'<div class="rt-subs">'+it.subs.map(function(x){ return '<span class="rt-sub">'+esc(x[0])+'<i>'+esc(x[1])+'</i></span>'; }).join("")+'</div>':'')+
         (it.desc?'<p class="rt-desc">'+esc(it.desc)+'</p>':'')+'</div>';
     }).join("")+'</div>';
   case "kv": return '<div class="kv"><span class="num">'+esc(b.v)+'</span><span>'+esc(b.l)+'</span></div>';
   case "boxhl": return '<div class="box-hl"><span>'+esc(b.label)+'</span><p>'+br(b.x)+'</p></div>';
   case "flow":
-    return '<div class="flow">'+(b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<div class="flow-row">'+
+    return '<div class="flow">'+(b.title?'<h3>'+esc(b.title)+'</h3>':'')+'<div class="flow-row'+(b.steps.some(function(s){ return s.img; })?" has-img":"")+'">'+
       b.steps.map(function(s,k){ return '<div class="fstep'+(k===b.steps.length-1?" last":"")+'"><span class="num">'+(k+1)+'</span><span class="fstep-l">'+br(s.l)+'</span>'+(s.img?img(s.img,"item"):'')+'</div>'; }).join("")+
       '</div></div>';
   case "stats":
@@ -1860,6 +1949,34 @@ function block(b){
       return '<div class="gcard'+(g.v===0?" zero":"")+'"><div class="gcard-art">'+img(g.img,"gear",g.l)+'<span class="gcard-v num">'+g.v+'</span></div><b class="gcard-l">'+esc(g.l)+'</b><div class="gpips" aria-label="5단계 중 '+g.v+'단계">'+pips+'</div></div>';
     }).join("")+'</div>';
   case "skill":
+    if(b.up){   // 레벨별 소모량 (스킬 · 버스트 구분) + 재료 부족으로 막히는 지점
+      var M = b.mat, RN = ["Ⅰ","Ⅱ","Ⅲ"], fmt = function(v){ return v.toLocaleString(); };
+      var gate = {}; b.gates.forEach(function(g){ gate[g.at] = g; });   // at: 막히는 레벨 (그 다음 레벨업 직전)
+      var first = [-1,-1,-1,-1,-1]; b.up.forEach(function(r,i){ r.forEach(function(v,k){ if(v && first[k]<0) first[k] = i; }); });
+      var cells = function(r, i, set){ return set.map(function(k,n){ var v = r[k];
+        return '<td class="'+(n===0?"g ":"")+(v?"":"z")+(v && first[k]===i && i>0 ? " new":"")+'">'+(v?fmt(v):"—")+'</td>'; }).join(""); };
+      var SK = [0,1,2,3], BU = [0,1,2,4];
+      var tip = function(src, name, sub, r){ return '<span class="smat-ic'+(r?" r":"")+'" tabindex="0">'+img(src,"item",name)+'<span class="ibox-tip" role="tooltip"><b>'+name+'</b></span></span>'; };   // 이름만 표시
+      var th = function(imgs, lb, g){ var who = lb==="스킬" ? "스킬 1 · 2" : "버스트 스킬";
+        return [0,1,2].map(function(t,n){ return '<th'+(n===0&&g?' class="g"':'')+'>'+tip(imgs[t], lb+" 메뉴얼 "+RN[t], (t+1)+"단계 스킬칩 · "+who+" 레벨업 재료")+'</th>'; }).join("")+
+          '<th>'+tip(M.chip, "속성칩", "레벨 4 → 5부터 필요"+(lb==="스킬" ? "" : " · 스킬의 2배"), 1)+'</th>'; };
+      var blk = function(lv, span){ var g = gate[lv]; return '<tr class="blk"><td colspan="'+span+'"><span>'+ICO.lock+'<span><b>'+g.lack+'</b>이 부족하면 레벨 '+lv+'에서 막힙니다</span></span></td></tr>'; };
+      var build = function(sets, heads, span){
+        var tot = sets.map(function(){ return [0,0,0,0,0]; }), need = false, h = "";
+        b.up.forEach(function(r,i){
+          var lv = i+1;
+          if(gate[lv]){ h += blk(lv, span); need = true; }
+          r.forEach(function(v,k){ tot.forEach(function(t){ t[k] += v; }); });
+          h += '<tr'+(need?' class="need"':'')+'><td>'+lv+' → '+(lv+1)+'</td>'+sets.map(function(st){ return cells(r, i, st); }).join("")+'</tr>';
+        });
+        var tr = '<tr class="tot"><td>합계</td>'+sets.map(function(st,si){ return st.map(function(k,n){ return '<td'+(n===0?' class="g"':'')+'>'+fmt(tot[si][k])+'</td>'; }).join(""); }).join("")+'</tr>';
+        return '<table class="smat-t"><thead>'+heads+'</thead><tbody>'+h+tr+'</tbody></table>';
+      };
+      var pc = build([SK, BU], '<tr><th rowspan="2">레벨</th><th colspan="4" class="g">스킬 1 · 2</th><th colspan="4" class="g">버스트 스킬</th></tr><tr>'+th(M.s,"스킬",1)+th(M.b,"버스트",1)+'</tr>', 9);
+      var mo = '<h5>스킬 1 · 2</h5>'+build([SK], '<tr><th>레벨</th>'+th(M.s,"스킬",1)+'</tr>', 5)+'<h5>버스트 스킬</h5>'+build([BU], '<tr><th>레벨</th>'+th(M.b,"버스트",1)+'</tr>', 5);
+      return '<div class="smat-pc">'+pc+'</div><div class="smat-m">'+mo+'</div>'+
+        '<p class="smat-note">스킬 1개를 올릴 때 기준 · 아이콘 순서: 1단계 · 2단계 · 3단계 스킬칩 · 속성칩 · 빨간 숫자는 처음 필요해지는 재료</p>';
+    }
     var h = '<div class="skill" aria-label="스킬 레벨 1~10, 4와 7에서 막힘">';
     for(var k=1;k<=10;k++){ var st = b.stops.indexOf(k)>-1; h += '<span class="pip'+(st?" stop":(k<7?" f":""))+'">'+k+'</span>'; }
     return h+'</div>';
@@ -1913,7 +2030,7 @@ function widgetHTML(b){
   case "w-collect":
     var kits = COL_KIT.map(function(k,i){ return '<button class="ckit" type="button" data-kit="'+i+'" aria-pressed="'+(i===0)+'"><span class="ckit-h">ITEM</span><img src="'+k.img+'" alt=""><b>'+k.n+'</b><span class="ckit-x">보유 <b class="ckit-own" data-own="'+i+'">–</b></span><span class="ckit-p num" data-kp="'+i+'"></span></button>'; }).join("");
     return '<div class="w-h col-h"><b>'+ICO.spark+'소장품 관리 직접 하기</b><span class="col-hr"><span class="col-path" aria-label="진행 등급"><i data-path="R">R 0→15</i>'+ICO.arrow+'<i data-path="SR">SR 5→15</i></span></span><button class="btn-sm auto col-auto" type="button" data-cauto>'+ICO.play+'자동으로 돌려보기</button></div>'+
-      '<div class="col-stage" data-stage><img data-col alt="소장품"><div class="col-burst" data-burst></div><div class="col-notice">대성공 확률 <b class="num" data-rate>–</b></div>'+
+      '<div class="col-stage" data-stage><img data-col data-ph="item" alt="소장품"><span class="col-name" data-colname></span><div class="col-burst" data-burst></div><div class="col-notice">대성공 확률 <b class="num" data-rate>–</b></div>'+
         '<div class="col-rub" data-rub hidden><p>좌우로 문질러 주세요</p><div class="col-rub-bar"><i data-rubfill></i></div><b class="num" data-rubpct>0%</b></div></div>'+
       '<div class="col-info"><span class="col-lv"><span class="col-grade" data-grade>R</span><span class="col-pips" data-pips></span><b class="num" data-lv>0</b> 단계</span><span class="col-exp num" data-exp></span></div>'+
       '<div class="col-expbar"><b data-exppre></b><i data-expfill></i></div>'+
@@ -2392,7 +2509,7 @@ var MOUNT = {
     function has(k){ return unlimited || inv[k] >= 10; }
     var KN = ["초급","중급","상급"];
     var $ = function(q){ return el.querySelector(q); };
-    var stage = $("[data-stage]"), rub = $("[data-rub]");
+    var stage = $("[data-stage]"), rub = $("[data-rub]"), doll = colPickDoll(), shown = null;
     function rate(k){ return lv>=15 ? 0 : COL_RATE[g][lv][k===undefined?kit:k]; }
     function maxRep(){ if(lv>=15) return 0; var m = Math.max(1, Math.ceil((COL_REQ[g]-exp)/COL_KIT[kit].x)); if(!unlimited) m = Math.min(m, Math.floor(inv[kit]/10)); return Math.max(unlimited?1:0, m); }
     function fmt(v){ return (v%1 ? v.toFixed(1) : v)+"%"; }
@@ -2409,7 +2526,8 @@ var MOUNT = {
       $("[data-grade]").className = "col-grade g-"+g.toLowerCase();
       el.querySelectorAll("[data-kit]").forEach(function(x){ x.setAttribute("aria-pressed", +x.dataset.kit===kit); });
       el.querySelectorAll("[data-kp]").forEach(function(x){ x.textContent = lv>=15 ? "–" : "대성공 "+fmt(rate(+x.dataset.kp)); });
-      if($("[data-col]").getAttribute("src")!==COL_IMG) $("[data-col]").src = COL_IMG;
+      if(shown!==doll){ shown = doll; var ci = $("[data-col]"); delete ci.dataset.fell; ci.src = doll.img; ci.alt = doll.n; }   // 이미지가 없으면 기본 그림으로 대체
+      $("[data-colname]").textContent = doll.n+"("+doll.t+")";
       $("[data-lv]").textContent = lv;
       // 별은 단계가 오를 때(새로 얻은 별)만 한 번 돌고, 그 외에는 다시 그리지 않음
       var pipN = Math.min(3, Math.floor(lv/5)), pipKey = g+pipN, pe = $("[data-pips]");
@@ -2543,7 +2661,7 @@ var MOUNT = {
       unlimited = !unlimited; if(!unlimited) inv = COL_INV.slice();
       msg(unlimited ? "무제한 모드: 키트 개수 제한 없이 진행합니다." : "제한 모드: 보유 키트 초급 "+COL_INV[0]+" · 중급 "+COL_INV[1]+" · 상급 "+COL_INV[2]+"개로 다시 채웠습니다.", ""); paint();
     });
-    $("[data-creset]").addEventListener("click", function(){ inv = COL_INV.slice(); g = "R"; lv = 0; exp = 0; rep = 1; hist = []; st = {n:0, great:0, used:[0,0,0]}; msg("처음 상태로 돌아갔습니다.", ""); paint(); });
+    $("[data-creset]").addEventListener("click", function(){ doll = colPickDoll(doll); inv = COL_INV.slice(); g = "R"; lv = 0; exp = 0; rep = 1; hist = []; st = {n:0, great:0, used:[0,0,0]}; msg("처음 상태로 돌아갔습니다.", ""); paint(); });
     paint();
   },
   "w-daily": function(el, b){
