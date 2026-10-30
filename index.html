@@ -2704,7 +2704,7 @@ var MOUNT = {
         var r = rate(); st.n++; done++; remain = total - done; st.used[k] += 10; if(!unlimited) inv[k] -= 10;
         if(Math.random()*100 < r){ great = true; st.great++; lv = Math.min(15, Math.floor(lv/5)*5+5); exp = 0; finish(); return; }
         exp += COL_KIT[k].x; gained += COL_KIT[k].x;
-        if(exp >= COL_REQ[g]){ paint(); setTimeout(function(){ exp = 0; lv++; finish(); }, 260); return; }   // 레벨업 시 초과 경험치는 초기화
+        if(exp >= COL_REQ[g]){ paint(); setTimeout(function(){ exp = 0; lv = Math.min(15, lv+1); finish(); }, 260); return; }   // 레벨업 시 초과 경험치는 초기화
         msg("관리중… "+done+" / "+total+"회 · 경험치 +"+gained.toLocaleString(), "");
         paint();
         if(done>=total){ setTimeout(finish, 200); return; }
@@ -2715,12 +2715,14 @@ var MOUNT = {
     // 문지르기: 마우스를 좌우로 왔다갔다(누르지 않아도 됨) · 터치는 좌우로 밀기
     var lastX = null, prog = 0;
     function rubMove(x){
+      if(rub.hidden || !busy) return;   // 문지르기가 끝난 뒤 들어오는 터치 이동은 무시 (중복 관리 방지)
       if(lastX===null){ lastX = x; return; }
       prog += Math.abs(x-lastX) / (stage.clientWidth*6) * 100; lastX = x;
       if(prog >= 100){ prog = 100; endRub(); }
       $("[data-rubfill]").style.width = prog+"%"; $("[data-rubpct]").textContent = prog.toFixed(1)+"%";
     }
     function endRub(){
+      if(rub.hidden) return;   // 한 번만 실행
       rub.hidden = true; stage.classList.remove("rubbing"); lastX = null;
       msg("관리중…", ""); setTimeout(resolve, 380);
     }
