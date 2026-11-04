@@ -328,6 +328,7 @@ img{max-width:100%}
 .link-hero.tc .lh-in{display:inline-block;text-align:left;max-width:100%}
 .link-hero.center{width:fit-content;max-width:100%;align-self:center;padding-right:28px}
 .link-hero:hover{border-color:var(--accent);transform:translateY(-2px)}
+.link-hero.off,.link-hero.off:hover{border-color:var(--line);transform:none;cursor:default}   /* 링크 차단 상태 */
 .link-hero span{display:block;font-size:13.5px;color:var(--ink-2);margin-bottom:4px}
 .link-hero strong{display:flex;align-items:center;gap:10px;font-family:var(--f-num);font-size:clamp(22px,2.8vw,32px);font-weight:700;color:var(--accent);letter-spacing:-.01em;overflow-wrap:anywhere}
 .link-hero strong svg{flex:none;width:22px;height:22px}
@@ -1326,7 +1327,7 @@ var Q = [
 
 {c:1, q:"앱플레이어를 써도 되나요?", a:"앱플레이어는 사용하지 마세요.", b:[
   {t:"p", x:"매크로 문제로 앱플레이어는 공식적으로 막혀 있습니다."},
-  {t:"link", tc:1, label:"공식 PC 버전이 있습니다.", url:"https://nikke-kr.com/", x:"nikke-kr.com"},
+  {t:"link", tc:1, off:1, label:"공식 PC 버전이 있습니다.", url:"https://nikke-kr.com/", x:"nikke-kr.com"},   // off: 링크 임시 차단 (다시 열려면 off:1 삭제)
   {t:"warn", c:1, nb:1, x:"계정 정지 위험이 있습니다."}]},
 
 {c:2, q:"뭐부터 해야 하나요?", a:"일일퀘스트·이벤트부터 확인하고, 노말·하드는 막히기 전까지 미세요.", b:[
@@ -1964,7 +1965,8 @@ function block(b){
   case "ol": return '<ol class="ol">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ol>';
   case "check": return '<ul class="checks">'+b.items.map(function(x){ return '<li>'+ICO.check+'<span>'+br(x)+'</span></li>'; }).join("")+'</ul>';
   case "sub": return '<div class="b-sub"><h3>'+esc(b.title)+'</h3><ul class="ul muted">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ul></div>';
-  case "link": return '<a class="link-hero'+(b.center?" center":"")+(b.tc?" tc":"")+'" href="'+esc(b.url)+'" target="_blank" rel="noopener">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+ICO.out+'</strong>'+(b.tc?'</span>':'')+'</a>';
+  case "link": if(b.off) return '<div class="link-hero off'+(b.center?" center":"")+(b.tc?" tc":"")+'">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+'</strong>'+(b.tc?'</span>':'')+'</div>';
+    return '<a class="link-hero'+(b.center?" center":"")+(b.tc?" tc":"")+'" href="'+esc(b.url)+'" target="_blank" rel="noopener">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+ICO.out+'</strong>'+(b.tc?'</span>':'')+'</a>';
   case "routine":
     return '<div class="routine'+(b.items.length===3?" r3":"")+'">'+b.items.map(function(it){
       return '<div class="rt'+(it.subs?" wide":"")+(it.full?" full":"")+'"><span class="rt-k">매일</span><b>'+esc(it.l)+'</b>'+
