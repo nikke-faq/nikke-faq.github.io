@@ -1280,7 +1280,7 @@ document.addEventListener("error", function(e){
   var t = e.target;
   if(t && t.tagName === "IMG" && t.dataset.ph && !t.dataset.fell){ t.dataset.fell = "1"; t.src = PH[t.dataset.ph] || PH.portrait; }
 }, true);
-function img(src, kind, alt){ return '<img src="'+esc(src)+'" data-ph="'+kind+'" alt="'+esc(alt||"")+'" loading="lazy" decoding="async">'; }
+function img(src, kind, alt){ return '<img sr'+'c="'+esc(src)+'" data-ph="'+kind+'" alt="'+esc(alt||"")+'" loading="lazy" decoding="async">'; }
 
 /* ── 분류 ── */
 var CATS = [
@@ -1966,7 +1966,7 @@ function block(b){
   case "check": return '<ul class="checks">'+b.items.map(function(x){ return '<li>'+ICO.check+'<span>'+br(x)+'</span></li>'; }).join("")+'</ul>';
   case "sub": return '<div class="b-sub"><h3>'+esc(b.title)+'</h3><ul class="ul muted">'+b.items.map(function(x){ return '<li>'+br(x)+'</li>'; }).join("")+'</ul></div>';
   case "link": if(b.off) return '<div class="link-hero off'+(b.center?" center":"")+(b.tc?" tc":"")+'">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+'</strong>'+(b.tc?'</span>':'')+'</div>';
-    return '<a class="link-hero'+(b.center?" center":"")+(b.tc?" tc":"")+'" href="'+esc(b.url)+'" target="_blank" rel="noopener">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+ICO.out+'</strong>'+(b.tc?'</span>':'')+'</a>';
+    return '<a class="link-hero'+(b.center?" center":"")+(b.tc?" tc":"")+'" hr'+'ef="'+esc(b.url)+'" target="_blank" rel="noopener">'+(b.tc?'<span class="lh-in">':'')+'<span>'+esc(b.label)+'</span><strong>'+esc(b.x)+ICO.out+'</strong>'+(b.tc?'</span>':'')+'</a>';
   case "routine":
     return '<div class="routine'+(b.items.length===3?" r3":"")+'">'+b.items.map(function(it){
       return '<div class="rt'+(it.subs?" wide":"")+(it.full?" full":"")+'"><span class="rt-k">매일</span><b>'+esc(it.l)+'</b>'+
@@ -2091,7 +2091,7 @@ function widgetHTML(b){
     }
     return head("레벨 분배 비교")+'<div class="sync2">'+panel("x")+panel("o")+'</div>';
   case "w-collect":
-    var kits = COL_KIT.map(function(k,i){ return '<button class="ckit" type="button" data-kit="'+i+'" aria-pressed="'+(i===0)+'"><span class="ckit-h">ITEM</span><img src="'+k.img+'" alt=""><b>'+k.n+'</b><span class="ckit-x">보유 <b class="ckit-own" data-own="'+i+'">–</b></span><span class="ckit-p num" data-kp="'+i+'"></span></button>'; }).join("");
+    var kits = COL_KIT.map(function(k,i){ return '<button class="ckit" type="button" data-kit="'+i+'" aria-pressed="'+(i===0)+'"><span class="ckit-h">ITEM</span><img sr'+'c="'+k.img+'" alt=""><b>'+k.n+'</b><span class="ckit-x">보유 <b class="ckit-own" data-own="'+i+'">–</b></span><span class="ckit-p num" data-kp="'+i+'"></span></button>'; }).join("");
     return '<div class="w-h col-h"><b>'+ICO.spark+'소장품 관리 직접 하기</b><span class="col-hr"><span class="col-path" aria-label="진행 등급"><i data-path="R">R 0→15</i>'+ICO.arrow+'<i data-path="SR">SR 5→15</i></span></span></div>'+
       '<div class="col-stage" data-stage><img data-col data-ph="item" alt="소장품"><span class="col-name" data-colname></span><div class="col-burst" data-burst></div><div class="col-notice">대성공 확률 <b class="num" data-rate>–</b></div>'+
         '<div class="col-rub" data-rub hidden><p>좌우로 문질러 주세요</p><div class="col-rub-bar"><i data-rubfill></i></div><b class="num" data-rubpct>0%</b></div></div>'+
